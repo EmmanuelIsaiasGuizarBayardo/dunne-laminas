@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Neurona AR · DUNNE</title>
+<meta name="description" content="Explora una motoneurona en 3D y en realidad aumentada. Toca cada estructura para aprender sobre soma, dendritas, axón, mielina y sinapsis. División Universitaria de Neuroingeniería, UNAM.">
+<meta name="theme-color" content="#0b1218">
+
+<link rel="canonical" href="https://mau897.github.io/">
+<link rel="icon" href="./assets/Dunne_oscuros.png">
+<link rel="apple-touch-icon" href="./assets/Dunne_oscuros.png">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Neurona AR · DUNNE">
+<meta property="og:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
+<meta property="og:url" content="https://mau897.github.io/">
+<meta property="og:image" content="https://mau897.github.io/assets/poster.webp">
+<meta property="og:locale" content="es_MX">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Neurona AR · DUNNE">
+<meta name="twitter:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
+<meta name="twitter:image" content="https://mau897.github.io/assets/poster.webp">
+
+<link rel="stylesheet" href="./style.css">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+<!-- Configuración de la lámina. Para publicar otro modelo se duplica este
+     bloque en una página nueva y se cambian las rutas: el resto del código
+     no conoce nada específico de la neurona. -->
+<script type="application/json" id="lamina">
+{
+  "kicker": "Lámina 01 · Motoneurona somática",
+  "title": "La célula<br>que <em>ordena</em><br>moverte",
+  "dek": "Gírala con el dedo y toca los puntos para leer qué es cada estructura.",
+  "model": {
+    "glb": "./assets/Neurona_v3.glb",
+    "usdz": "./assets/Neurona_v3.usdz",
+    "poster": "./assets/poster.webp",
+    "alt": "Modelo tridimensional de una motoneurona: soma naranja con núcleo rojo, árbol dendrítico azul, axón verde envuelto en cuatro vainas de mielina amarillas y terminales sinápticos verdes."
+  },
+  "content": "./content.es.json",
+  "hotspots": "./hotspots.json"
+}
+</script>
+</head>
+
+<body>
+
+<section class="stage" id="stage" data-mode="cover">
+
+  <model-viewer class="canvas" id="viewer"
+    alt=""
+    loading="eager"
+    camera-controls
+    touch-action="none"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    ar-scale="auto"
+    environment-image="neutral"
+    shadow-intensity="0.35"
+    exposure="1.1"
+    camera-orbit="-16deg 22deg 108%"
+    min-field-of-view="20deg"
+    max-field-of-view="55deg"
+    interaction-prompt="none">
+    <button class="act act-flame" slot="ar-button" id="arButton">Verla en tu espacio</button>
+  </model-viewer>
+
+  <header class="masthead">
+    <a class="sigil" href="./index.html">
+      <img src="./assets/Dunne_oscuros.png" alt="Logo de DUNNE" width="28" height="28">
+      <span>
+        <b>DUNNE</b>
+        <small>División Universitaria de Neuroingeniería · UNAM</small>
+      </span>
+    </a>
+    <div class="helm">
+      <button type="button" class="act act-bare" id="openWays">Cómo usarla</button>
+      <button type="button" class="act act-bare" id="openProbe">Diagnóstico</button>
+    </div>
+  </header>
+
+  <div class="cover" id="cover">
+    <p class="kicker" id="kicker"></p>
+    <h1 class="monument" id="title"></h1>
+    <p class="dek" id="dek"></p>
+    <button type="button" class="act act-flame" id="enter">Explorar la lámina</button>
+  </div>
+
+  <div class="caption" aria-live="polite">
+    <div class="legend">
+      <p class="folio" id="folio">—</p>
+      <h2 class="rubric" id="rubric">Cargando…</h2>
+      <p class="gloss" id="gloss"></p>
+    </div>
+    <div class="baton">
+      <button type="button" class="act act-bare" id="prev">Anterior</button>
+      <span class="tally" id="tally">—</span>
+      <button type="button" class="act act-bare" id="next">Siguiente</button>
+      <button type="button" class="act" id="openMore">Más información</button>
+    </div>
+  </div>
+
+  <div class="fault" id="fault" hidden></div>
+
+</section>
+
+<!-- ventana: ficha completa de la estructura activa -->
+<dialog id="more" aria-labelledby="moreTitle">
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="kicker" id="moreFolio">—</p>
+      <button type="button" class="act act-bare" data-close>Cerrar</button>
+    </div>
+    <h2 id="moreTitle">—</h2>
+    <p class="lede" id="moreShort"></p>
+    <h3>Más a fondo</h3>
+    <div id="moreDeep"></div>
+    <h3>Cómo explicarlo en el taller</h3>
+    <p id="moreAnalogy"></p>
+    <h3>Error frecuente</h3>
+    <p id="moreMyth"></p>
+    <p class="caveat" id="moreCaveat" hidden></p>
+    <p class="sources" id="moreSources"></p>
+  </div>
+</dialog>
+
+<!-- ventana: los tres caminos de uso y el QR -->
+<dialog id="ways" aria-labelledby="waysTitle">
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="kicker">Cómo usarla</p>
+      <button type="button" class="act act-bare" data-close>Cerrar</button>
+    </div>
+    <h2 id="waysTitle">Tres caminos, de menos a más fricción</h2>
+
+    <ol class="ladder">
+      <li>
+        <h3>Aquí mismo, en el navegador</h3>
+        <p>
+          Ya está funcionando detrás de esta ventana, en cualquier teléfono,
+          tablet o computadora. Es la vía recomendada para talleres con muchos
+          asistentes: cero instalación, cero permisos.
+        </p>
+      </li>
+      <li>
+        <h3>En realidad aumentada, sin app</h3>
+        <p>
+          <b>Verla en tu espacio</b> coloca la neurona en el piso o la mesa, a
+          un metro de largo. Funciona en Android con Scene Viewer y en iPhone o
+          iPad con AR Quick Look, y requiere que la página se sirva por HTTPS.
+        </p>
+      </li>
+      <li>
+        <h3>Con la app y el marcador impreso</h3>
+        <p>
+          La app de Android añade el reconocimiento del marcador y los módulos
+          interactivos hechos en Unity. Requiere permitir la instalación de
+          apps de origen desconocido, así que conviene reservarla para el aula.
+        </p>
+        <p class="deeds">
+          <!-- Enlace al asset publicado de la v1.0. Cuando el nombre del asset
+               se estandarice a NeuronaAR.apk, cambiar por
+               https://github.com/Mau897/Mau897.github.io/releases/latest/download/NeuronaAR.apk
+               y así deja de haber que editar este HTML en cada release. -->
+          <a class="act act-flame" href="https://github.com/Mau897/Mau897.github.io/releases/download/v1.0/NeuronaAR5.apk">Descargar APK</a>
+          <a class="act" href="./instrucciones.html">Manual completo</a>
+        </p>
+        <p class="aside-note">
+          Verifica el archivo antes de instalarlo: <code>shasum -a 256 NeuronaAR5.apk</code>
+          debe coincidir con la suma publicada en el release.
+        </p>
+      </li>
+    </ol>
+
+    <div class="emblem">
+      <div>
+        <h3>El código de esta página</h3>
+        <p>
+          Abre <code>mau897.github.io</code>. Sirve para un taller: se proyecta
+          o se imprime y cada asistente entra desde su propio dispositivo.
+        </p>
+        <p class="aside-note">
+          No es el marcador de la app. Un marcador de realidad aumentada
+          necesita detalle visual no repetitivo, y un QR es lo contrario, así
+          que el marcador se está rediseñando aparte.
+        </p>
+      </div>
+      <figure>
+        <img src="./assets/qr_dunne.jpg" width="170" height="170"
+             alt="Código QR que enlaza a mau897.github.io, la página de Neurona AR de DUNNE.">
+        <figcaption class="meta">Escanéalo o compártelo</figcaption>
+      </figure>
+    </div>
+
+    <p class="sources">
+      Neurona AR · División Universitaria de Neuroingeniería, UNAM. Modelo 3D
+      y aplicación en Unity: Mauricio Mendiola Rivera. El modelo representa una
+      motoneurona somática: soma y dendritas en la médula espinal, axón en un
+      nervio periférico mielinizado por células de Schwann. Contenido didáctico
+      con referencias en APA 7, en revisión académica.
+    </p>
+  </div>
+</dialog>
+
+<!-- ventana: por qué la AR no está disponible en HTTP -->
+<dialog id="arHttps" aria-labelledby="arHttpsTitle">
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="kicker">Realidad aumentada</p>
+      <button type="button" class="act act-bare" data-close>Cerrar</button>
+    </div>
+    <h2 id="arHttpsTitle">La AR necesita HTTPS, y esta página está en HTTP</h2>
+    <p class="lede">
+      Estás en <code id="arOrigin">—</code>. Desde ahí la realidad aumentada
+      es imposible, y no por el teléfono ni por el modelo: el visor 3D carga
+      perfectamente.
+    </p>
+    <p>
+      Son dos bloqueos encadenados. <b>WebXR</b>, que hace la AR dentro del
+      navegador, solo existe en contexto seguro, así que en HTTP simplemente
+      no está. Y <b>Scene Viewer</b>, la app del sistema a la que Android
+      delega la AR, descarga el modelo por su cuenta y solo acepta
+      direcciones HTTPS; de ahí el error genérico en inglés que aparece
+      después de unos segundos.
+    </p>
+
+    <h3>Tres salidas, de menos a más esfuerzo</h3>
+    <ol class="ladder">
+      <li>
+        <h3>Publicar en GitHub Pages</h3>
+        <p>
+          Sirve por HTTPS con certificado válido y es donde el proyecto va a
+          vivir de todos modos. Es la prueba real: si funciona ahí, funciona
+          en el taller.
+        </p>
+      </li>
+      <li>
+        <h3>Un túnel HTTPS para iterar</h3>
+        <p>
+          Para no publicar en cada cambio: <code>cloudflared tunnel --url
+          http://localhost:8000</code> entrega una URL pública
+          <code>https://…trycloudflare.com</code> que Scene Viewer sí acepta.
+          <code>ngrok http 8000</code> hace lo mismo.
+        </p>
+      </li>
+      <li>
+        <h3>HTTPS en la red local con mkcert</h3>
+        <p>
+          Da contexto seguro sin salir de la LAN, lo que habilita <b>WebXR</b>
+          y hace la AR dentro del navegador, sin pasar por Scene Viewer. El
+          costo es instalar la autoridad certificadora local en el teléfono.
+        </p>
+      </li>
+    </ol>
+  </div>
+</dialog>
+
+<!-- ventana: diagnóstico técnico -->
+<dialog id="probe" aria-labelledby="probeTitle">
+  <div class="sheet">
+    <div class="sheet-head">
+      <p class="kicker">Soporte</p>
+      <button type="button" class="act act-bare" data-close>Cerrar</button>
+    </div>
+    <h2 id="probeTitle">Diagnóstico técnico</h2>
+    <p>
+      Si el modelo o la realidad aumentada no funcionan, estos son los datos
+      que explican por qué. Compártelos tal cual al reportar el problema.
+    </p>
+    <dl class="probe" id="probeList"></dl>
+  </div>
+</dialog>
+
+<script type="module">
+const lamina = JSON.parse(document.getElementById("lamina").textContent);
+
+const $ = id => document.getElementById(id);
+const stage = $("stage");
+const viewer = $("viewer");
+const fault = $("fault");
+
+/* ------------------------------------------------------------ la lámina -- */
+
+$("kicker").textContent = lamina.kicker;
+$("title").innerHTML = lamina.title;
+$("dek").textContent = lamina.dek;
+
+viewer.setAttribute("alt", lamina.model.alt);
+viewer.setAttribute("poster", lamina.model.poster);
+viewer.setAttribute("ios-src", lamina.model.usdz);
+viewer.setAttribute("src", lamina.model.glb);
+
+/* -------------------------------------------------- portada que se retira -- */
+
+/* El título es monumental al entrar y se aparta en cuanto la persona toca el
+   modelo, en lugar de competir con él de forma permanente. */
+function explore() {
+  stage.dataset.mode = "explore";
+}
+$("enter").addEventListener("click", explore);
+viewer.addEventListener("pointerdown", explore, { once: true });
+viewer.addEventListener("camera-change", event => {
+  if (event.detail?.source === "user-interaction") explore();
+});
+
+/* --------------------------------------------------------------- estado --- */
+
+const structures = new Map();
+let references = {};
+let tour = [];
+let current = 0;
+
+function reportFault(title, detail) {
+  fault.innerHTML = `<b>${title}</b>${detail}`;
+  fault.hidden = false;
+}
+
+async function fetchJson(path) {
+  let response;
+  try {
+    response = await fetch(path);
+  } catch (err) {
+    throw new Error(`No se pudo pedir ${path}. Si abriste la página con doble ` +
+      `clic, el navegador bloquea la lectura de archivos locales. (${err.message})`);
+  }
+  if (!response.ok) throw new Error(`${path} respondió ${response.status}.`);
+  return response.json();
+}
+
+async function load() {
+  const [content, anchors] = await Promise.all([
+    fetchJson(lamina.content),
+    fetchJson(lamina.hotspots),
+  ]);
+
+  references = content.references ?? {};
+  for (const s of content.structures) structures.set(s.class, s);
+
+  const placed = new Map(anchors.hotspots.map(h => [h.class, h]));
+  tour = (content.suggested_tour ?? [...structures.keys()]).filter(c => placed.has(c));
+
+  tour.forEach((cls, i) => {
+    const anchor = placed.get(cls);
+    const structure = structures.get(cls);
+    const dot = document.createElement("button");
+    dot.className = "hotspot";
+    dot.type = "button";
+    dot.slot = `hotspot-${cls}`;
+    dot.dataset.position = anchor.position.join(" ");
+    dot.dataset.normal = anchor.normal.join(" ");
+    dot.dataset.visibilityAttribute = "visible";
+    dot.dataset.n = String(i + 1).padStart(2, "0");
+    dot.setAttribute("aria-label", structure ? structure.label : cls);
+    dot.addEventListener("click", () => { explore(); show(i); });
+    viewer.appendChild(dot);
+  });
+
+  show(0);
+}
+
+/** Muestra la estructura `i` en el cintillo. La ficha completa va aparte. */
+function show(i) {
+  if (!tour.length) return;
+  current = (i + tour.length) % tour.length;
+  const s = structures.get(tour[current]);
+  if (!s) return;
+
+  const n = String(current + 1).padStart(2, "0");
+  $("folio").textContent = `${n} / ${String(tour.length).padStart(2, "0")}`;
+  $("rubric").textContent = s.label;
+  $("gloss").textContent = s.short;
+  $("tally").textContent = `${n} — ${String(tour.length).padStart(2, "0")}`;
+
+  for (const dot of viewer.querySelectorAll(".hotspot")) {
+    dot.classList.toggle("is-active", dot.slot === `hotspot-${tour[current]}`);
+  }
+  if ($("more").open) fillMore();
+}
+
+/* ------------------------------------------------------------- ventanas -- */
+
+function fillMore() {
+  const s = structures.get(tour[current]);
+  if (!s) return;
+  $("moreFolio").textContent =
+    `${String(current + 1).padStart(2, "0")} · ${lamina.kicker}`;
+  $("moreTitle").textContent = s.label;
+  $("moreShort").textContent = s.short;
+  $("moreDeep").innerHTML = s.long.split("\n\n").map(p => `<p>${p}</p>`).join("");
+  $("moreAnalogy").textContent = s.analogy ?? "";
+  $("moreMyth").textContent = s.misconception ?? "";
+  if (s.geometry_note) {
+    $("moreCaveat").textContent = s.geometry_note;
+    $("moreCaveat").hidden = false;
+  } else {
+    $("moreCaveat").hidden = true;
+  }
+  $("moreSources").innerHTML = (s.references ?? [])
+    .map(k => references[k]).filter(Boolean)
+    .map(r => `<span>${r}</span>`).join("");
+}
+
+function open(dialog) {
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");   // respaldo sin <dialog> modal
+}
+
+$("openMore").addEventListener("click", () => { fillMore(); open($("more")); });
+$("openWays").addEventListener("click", () => open($("ways")));
+$("openProbe").addEventListener("click", () => { fillProbe(); open($("probe")); });
+
+for (const button of document.querySelectorAll("[data-close]")) {
+  button.addEventListener("click", () => button.closest("dialog").close());
+}
+// Clic fuera de la hoja cierra la ventana.
+for (const dialog of document.querySelectorAll("dialog")) {
+  dialog.addEventListener("click", event => {
+    if (event.target === dialog) dialog.close();
+  });
+}
+
+$("prev").addEventListener("click", () => show(current - 1));
+$("next").addEventListener("click", () => show(current + 1));
+
+addEventListener("keydown", event => {
+  if (event.target.matches("input,textarea")) return;
+  if (event.key === "ArrowRight") show(current + 1);
+  if (event.key === "ArrowLeft") show(current - 1);
+});
+
+/* ---------------------------------------------------------- diagnóstico -- */
+
+/** Cadena del renderizador de WebGL, útil para descartar fallas de GPU. */
+function webglRenderer() {
+  try {
+    const gl = document.createElement("canvas").getContext("webgl2")
+            ?? document.createElement("canvas").getContext("webgl");
+    if (!gl) return "sin WebGL";
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    return info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : "WebGL disponible";
+  } catch (err) {
+    return `error: ${err.message}`;
+  }
+}
+
+const state = { model: "pendiente", error: "—" };
+
+function fillProbe() {
+  const rows = [
+    ["contexto seguro", isSecureContext ? "sí" : "no · AR requiere HTTPS", !isSecureContext],
+    ["origen", location.origin],
+    ["model-viewer", customElements.get("model-viewer") ? "cargado" : "no cargado",
+      !customElements.get("model-viewer")],
+    ["modelo", state.model, state.model !== "cargado"],
+    ["última falla", state.error],
+    ["AR disponible", arSuppressed
+      ? "suprimida · el origen es HTTP"
+      : (viewer.canActivateAR ? "sí" : "no"), arSuppressed || !viewer.canActivateAR],
+    ["WebXR", navigator.xr ? "presente" : "ausente"],
+    ["renderizador", webglRenderer()],
+    ["soporta dvh", CSS.supports("height", "1dvh") ? "sí" : "no", !CSS.supports("height", "1dvh")],
+    ["viewport", `${innerWidth} × ${innerHeight} @ ${devicePixelRatio}x`],
+    ["navegador", navigator.userAgent],
+  ];
+  $("probeList").innerHTML = rows.map(([k, v, bad]) =>
+    `<div><dt>${k}</dt><dd${bad ? ' class="bad"' : ""}>${v}</dd></div>`).join("");
+}
+
+/* ------------------------------------------------------- carga del visor -- */
+
+viewer.addEventListener("load", () => {
+  state.model = "cargado";
+  fault.hidden = true;
+});
+
+viewer.addEventListener("error", event => {
+  const kind = event.detail?.type ?? "desconocido";
+  state.model = "falló";
+  state.error = kind;
+  reportFault("El modelo 3D no se pudo cargar",
+    `Tipo de falla: <code>${kind}</code>. Abre <b>Diagnóstico</b> arriba para ` +
+    `ver los detalles.`);
+});
+
+// Si a los 10 s el componente no existe, el módulo del CDN nunca llegó.
+setTimeout(() => {
+  if (!customElements.get("model-viewer")) {
+    state.model = "sin visor";
+    reportFault("No se cargó el visor 3D",
+      "El módulo de <code>model-viewer</code> viene de un CDN y no llegó. " +
+      "Revisa la conexión o si la red bloquea <code>ajax.googleapis.com</code>.");
+  }
+}, 10000);
+
+/* En HTTP la AR de Android es imposible: WebXR necesita contexto seguro y
+   Scene Viewer exige una URL HTTPS. Se retira el atributo `ar` para que
+   model-viewer no muestre su propio botón, y el botón propio se muda al
+   cintillo convertido en una explicación: un control muerto sin motivo es
+   peor que no tenerlo. */
+const arSuppressed = !isSecureContext;
+
+if (arSuppressed) {
+  viewer.removeAttribute("ar");
+  const arButton = $("arButton");
+  arButton.removeAttribute("slot");
+  arButton.textContent = "¿Por qué no hay AR?";
+  arButton.classList.remove("act-flame");
+  document.querySelector(".baton").appendChild(arButton);
+  arButton.addEventListener("click", () => {
+    $("arOrigin").textContent = location.origin;
+    open($("arHttps"));
+  });
+}
+
+load().catch(err => {
+  $("rubric").textContent = "No se pudo cargar el contenido";
+  $("gloss").textContent = "El modelo puede seguir visible, pero sin las fichas.";
+  state.error = err.message;
+  reportFault("Falta un archivo de datos", `<code>${err.message}</code>`);
+});
+</script>
+
+</body>
+</html>

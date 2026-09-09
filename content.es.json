@@ -1,0 +1,231 @@
+{
+  "schema": "dunne.neuron.content/2",
+  "locale": "es-MX",
+  "mapping_revision": 2,
+  "review": {
+    "status": "borrador para revision academica",
+    "note": "Requiere visto bueno de un revisor de neurociencias antes de usarse con publico."
+  },
+  "model_interpretation": {
+    "cell_type": "Motoneurona somática (motoneurona inferior, tipo alfa)",
+    "rationale": "La presencia de células de Schwann indica que el axón es periférico. El árbol dendrítico descarta una neurona sensorial del ganglio de la raíz dorsal, que es pseudounipolar y carece de dendritas; la mielinización descarta una neurona autonómica posganglionar, en su mayoria amielínica. La lectura coherente es una motoneurona con soma y dendritas en el asta ventral de la médula espinal (SNC) y axón en el nervio periférico (SNP).",
+    "caveat": "Decir 'neurona del SNP' sin matiz es impreciso: el soma y las dendritas de esta célula están en el SNC. Lo periférico es el axón.",
+    "cns_contrast": "En el SNC la mielina la produce el oligodendrocito, que mieliniza decenas de segmentos de varios axones; en el SNP, una célula de Schwann mieliniza un solo segmento de un solo axón."
+  },
+  "suggested_tour": [
+    "dendrite",
+    "dendrite_primary",
+    "soma",
+    "nucleus",
+    "axon",
+    "myelin_sheath",
+    "schwann_nucleus",
+    "node_of_ranvier",
+    "axon_terminal",
+    "synaptic_bouton"
+  ],
+  "structures": [
+    {
+      "class": "soma",
+      "label": "Soma",
+      "order": 1,
+      "short": "El cuerpo de la célula. Aquí se fabrica casi todo lo que la neurona necesita y aquí se suman las señales que llegan por las dendritas.",
+      "long": "El soma concentra la maquinaria de síntesis: núcleo, retículo endoplasmico rugoso (los cuerpos de Nissl que se ven al microscopio), aparato de Golgi y mitocondrias. Una motoneurona debe producir proteinas no solo para si misma, sino para un axón que puede ser cientos de veces más largo que el diámetro de su propio cuerpo, y transportarlas hasta el extremo mediante transporte axonal. Los somas de las motoneuronas están entre los más grandes del sistema nervioso.\n\nSu segunda función es integradora: los potenciales postsinápticos excitatorios e inhibitorios que llegan por las dendritas se suman en el espacio y en el tiempo. Conviene precisar que la decisión de disparar no ocurre en el soma, sino en el segmento inicial del axón, la región contigua donde la densidad de canales de sodio dependientes de voltaje es mayor y donde el umbral es más bajo.",
+      "analogy": "Es la oficina central de la célula: recibe todos los reportes y ademas fabrica las piezas que el resto necesita.",
+      "misconception": "El soma no 'decide' el disparo. El umbral se alcanza en el segmento inicial del axón, una región que este modelo no representa como geometría separada.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "soma"
+      ]
+    },
+    {
+      "class": "nucleus",
+      "label": "Núcleo",
+      "order": 2,
+      "short": "Contiene el ADN y dirige la produccion de las proteinas que mantienen viva a la neurona durante toda su vida.",
+      "long": "El núcleo de una neurona suele mostrar un nucléolo prominente, coherente con una demanda alta y sostenida de síntesis de proteinas. El dato relevante para el publico es otro: la mayoria de las neuronas es posmitótica, es decir, no se divide. No hay recambio celular que corrija el desgaste, así que el mantenimiento depende de este núcleo por décadas.\n\nAdemas, la expresión génica neuronal no es estática: la actividad eléctrica desencadena programas de transcripción que modifican la propia célula, y ese acoplamiento entre actividad y expresión génica es uno de los mecanismos moleculares de la plasticidad y de la memoria a largo plazo.",
+      "analogy": "El archivo maestro de planos, que ademas nunca se puede reponer porque la neurona no se copia a si misma.",
+      "misconception": "Tener núcleo no distingue a la neurona de otras células. Lo distintivo es que, al no dividirse, depende de este núcleo toda la vida del organismo.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "nucleus"
+      ]
+    },
+    {
+      "class": "dendrite",
+      "label": "Dendrita",
+      "order": 3,
+      "short": "Las ramas finas que reciben señales de otras neuronas y las conducen hacia el soma.",
+      "long": "El árbol dendrítico es la superficie receptiva de la neurona. En una motoneurona recibe del orden de miles de contactos sinápticos, y su geometría no es un detalle decorativo: la amplitud con la que un potencial postsináptico llega al soma depende de la distancia recorrida y del diámetro de la rama, según las propiedades de cable de la membrana. Dos sinapsis idénticas tienen efectos distintos si una es proximal y la otra distal.\n\nUna aclaración de tipo celular: las espinas dendríticas, muy conspicuas en las neuronas piramidales de la corteza, no son el rasgo dominante en las motoneuronas, donde gran parte de los contactos ocurre sobre el tallo dendrítico. Este modelo no representa espinas.",
+      "analogy": "Son las antenas de la célula, y la distancia importa: un mensaje que entra lejos llega más debil.",
+      "misconception": "Las dendritas no son cables pasivos. Contienen canales dependientes de voltaje y pueden amplificar, filtrar o suprimir las señales que reciben.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "dendrite_01",
+        "dendrite_02",
+        "dendrite_03",
+        "dendrite_04",
+        "dendrite_05",
+        "dendrite_06",
+        "dendrite_07",
+        "dendrite_08",
+        "dendrite_09",
+        "dendrite_10",
+        "dendrite_11",
+        "dendrite_12",
+        "dendrite_13",
+        "dendrite_14",
+        "dendrite_15",
+        "dendrite_16",
+        "dendrite_17",
+        "dendrite_18",
+        "dendrite_19"
+      ]
+    },
+    {
+      "class": "dendrite_primary",
+      "label": "Dendrita primaria",
+      "order": 4,
+      "short": "Los troncos dendriticos gruesos que salen directamente del soma y de los que se desprenden las ramas más finas.",
+      "long": "Del soma emergen unos pocos troncos primarios que luego se ramifican de forma jerárquica, con diámetro decreciente en cada bifurcación. Ese adelgazamiento progresivo aumenta la resistencia axial y hace que la señal se atenúe más en las ramas distales, lo cual convierte a la forma del árbol en parte del cómputo de la célula.\n\nNota de honestidad sobre el modelo: la separacion entre tronco primario y rama fina que usamos aquí es operativa, tomada del tamaño de cada malla, y sirve para organizar la interaccion. La anatomia real no marca una frontera tajante entre una categoría y otra.",
+      "analogy": "El tronco del árbol frente a las ramas: mismo árbol, distinto grosor y distinta capacidad de llevar la señal.",
+      "misconception": "No hay un número fijo de dendritas primarias por neurona; varía por tipo celular y es parte de como se clasifica morfológicamente a las neuronas.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "dendrite_primary_01",
+        "dendrite_primary_02",
+        "dendrite_primary_03",
+        "dendrite_primary_04",
+        "dendrite_primary_05"
+      ]
+    },
+    {
+      "class": "axon",
+      "label": "Axón",
+      "order": 5,
+      "short": "La única fibra de salida. Conduce el potencial de accion desde el soma hasta los terminales, y aquí esta mielinizada.",
+      "long": "Cada neurona tiene un solo axón, aunque se ramifique al final. En una motoneurona humana que inerva músculos del pie, el axón puede superar el metro de longitud, todo sostenido por una sola célula. La conducción es funcionalmente unidireccional, del soma hacia los terminales.\n\nEn un axón mielinizado la conducción es saltatoria: la corriente pasa por debajo de la mielina y el potencial de accion se regenera solo en los nodos de Ranvier. Según Kandel et al. (2021), las fibras mielinizadas gruesas del sistema nervioso periférico alcanzan velocidades del orden de 100 m/s, frente a aproximadamente 0.5 a 2 m/s en las fibras amielínicas más delgadas. Rasband y Peles (2021) señalan que la mielinización no solo aporta velocidad: reduce ademas el espacio y el costo metabólico necesarios para conducir rapido.",
+      "analogy": "No es un cable que transmite electricidad de punta a punta; es una fila de cerillos que se van encendiendo uno al siguiente.",
+      "misconception": "El potencial de accion no se debilita conforme avanza. Se regenera completo en cada nodo, así que llega al final con la misma amplitud con la que empezó.",
+      "references": [
+        "kandel2021",
+        "rasband2021"
+      ],
+      "instances": [
+        "axon"
+      ]
+    },
+    {
+      "class": "myelin_sheath",
+      "label": "Vaina de mielina",
+      "order": 6,
+      "short": "Envoltura aislante que cubre el axón por segmentos. Cada segmento lo forma una sola célula de Schwann.",
+      "long": "La mielina no es grasa inerte depositada sobre el axón: son decenas de capas concéntricas de la membrana plasmatica de la célula de Schwann, compactadas y estabilizadas por proteinas propias como P0, MBP y PMP22 (Salzer, 2015). En el sistema nervioso periférico una célula de Schwann mieliniza un único segmento de un único axón, llamado internodo; en el sistema nervioso central esa tarea la hace el oligodendrocito, que mieliniza decenas de segmentos de varios axones a la vez.\n\nLa longitud del internodo escala con el diámetro de la fibra y va de cientos de micrómetros a poco más de un milímetro. El aislamiento reduce la capacitancia de la membrana y aumenta su resistencia, lo que permite que la corriente alcance el siguiente nodo sin disiparse. La relacion es recíproca: el axón instruye a la célula de Schwann para que mielinice, y la mielina resulta necesaria para la integridad del axón a largo plazo (Stassart et al., 2018).",
+      "analogy": "Como el aislante de un cable, pero hecho de células vivas envueltas muchas veces, y por tramos, no de corrido.",
+      "misconception": "Perder mielina no solo vuelve lenta la conducción. Tambien compromete la supervivencia del axón, y eso explica por que las enfermedades desmielinizantes acaban produciendo dano axonal irreversible.",
+      "references": [
+        "salzer2015",
+        "stassart2018",
+        "salzer2016"
+      ],
+      "instances": [
+        "myelin_sheath_01",
+        "myelin_sheath_02",
+        "myelin_sheath_03",
+        "myelin_sheath_04"
+      ]
+    },
+    {
+      "class": "schwann_nucleus",
+      "label": "Núcleo de célula de Schwann",
+      "order": 7,
+      "short": "El núcleo de la célula que forma esa vaina. Queda desplazado hacia la cara externa del segmento, no en el centro.",
+      "long": "Cada vaina de este modelo tiene su propio núcleo, y esa correspondencia de uno a uno es exactamente la que existe en el nervio periférico: una célula de Schwann por internodo. El núcleo y casi todo el citoplasma quedan en la cara abaxonal, por fuera de la mielina compacta, razón por la cual se ve como un cuerpo desplazado hacia un costado y no como una estructura concéntrica (Salzer, 2015).\n\nEstas células hacen mucho más que aislar. Tras una lesión del nervio se desdiferencian a un fenotipo reparador, retiran los restos de mielina junto con los macrófagos y se alinean formando las bandas de Bungner, que guían al axón en regeneración hacia su blanco (Jessen et al., 2015). Es la razón principal por la que un nervio periférico puede recuperar función y una lesión de médula espinal, donde no hay células de Schwann, prácticamente no.",
+      "analogy": "Cada tramo del aislante lo puso un obrero distinto, y ese punto es su cabeza asomando por fuera del tramo que construyó.",
+      "misconception": "No hay una célula de Schwann por axón, sino una por segmento. Un axón de un metro necesita cientos de células de Schwann colaborando en fila.",
+      "references": [
+        "salzer2015",
+        "jessen2015"
+      ],
+      "instances": [
+        "schwann_nucleus_01",
+        "schwann_nucleus_02",
+        "schwann_nucleus_03",
+        "schwann_nucleus_04"
+      ]
+    },
+    {
+      "class": "node_of_ranvier",
+      "label": "Nodo de Ranvier",
+      "order": 8,
+      "short": "Los espacios sin mielina entre dos segmentos, donde el potencial de accion se regenera antes de seguir.",
+      "long": "Un nodo mide alrededor de un micrómetro de axón descubierto y concentra una densidad muy alta de canales de sodio dependientes de voltaje. Ese agrupamiento no es espontáneo: depende de sistemas de adhesion entre el axón y la célula glial que anclan el citoesqueleto axonal y fijan los canales en su sitio (Rasband y Peles, 2021). Sin nodos no existe conducción saltatoria.\n\nEn las enfermedades desmielinizantes, la perdida de mielina desorganiza estos dominios y el resultado clínico es bloqueo o enlentecimiento de la conducción, que es lo que se mide en un estudio de velocidad de conducción nerviosa.",
+      "analogy": "Son las estaciones de relevo: el mensaje no se transmite de corrido, se vuelve a gritar completo en cada estación.",
+      "misconception": "El nodo no es un hueco vacío ni un defecto del aislamiento: es la única región del axón donde el potencial de accion puede regenerarse, y por eso su posición esta finamente regulada.",
+      "references": [
+        "rasband2021",
+        "kandel2021"
+      ],
+      "geometry_note": "En el modelo actual los nodos no son mallas independientes: son los tramos donde el axón queda visible entre dos vainas. No se pueden tocar por separado hasta que la malla del axón se divida en Blender.",
+      "instances": []
+    },
+    {
+      "class": "axon_terminal",
+      "label": "Terminal axónico",
+      "order": 9,
+      "short": "El extremo del axón se ramifica para contactar a varias células objetivo, no a una sola.",
+      "long": "La arborizacion terminal reparte la señal. En una motoneurona cada rama termina sobre una fibra muscular distinta, y el conjunto de fibras inervadas por una sola motoneurona se llama unidad motora: cuando esa neurona dispara, todas sus fibras se contraen juntas. La proporción del modelo, con siete ramas y seis botones, es consistente con esa idea.\n\nUn detalle que suele omitirse: la mielina termina antes del final del axón. La porción preterminal es amielínica, de modo que la conducción saltatoria deja de operar en el último tramo, justo antes de la sinapsis.",
+      "analogy": "Como un cable que se abre en varias puntas para conectar varios aparatos al mismo tiempo.",
+      "misconception": "Una neurona no habla con una sola célula. Una sola motoneurona puede controlar desde unas pocas hasta más de mil fibras musculares, según el músculo.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "axon_terminal_01",
+        "axon_terminal_02",
+        "axon_terminal_03",
+        "axon_terminal_04",
+        "axon_terminal_05",
+        "axon_terminal_06",
+        "axon_terminal_07"
+      ]
+    },
+    {
+      "class": "synaptic_bouton",
+      "label": "Botón sináptico",
+      "order": 10,
+      "short": "El engrosamiento final donde la señal eléctrica se convierte en química y se libera el neurotransmisor.",
+      "long": "El botón contiene vesiculas sinápticas cargadas de neurotransmisor, mitocondrias y zonas activas especializadas para la liberacion. Cuando el potencial de accion llega, abre canales de calcio dependientes de voltaje; la entrada de calcio dispara la fusión de las vesiculas con la membrana en menos de un milisegundo y el neurotransmisor se libera al espacio sináptico. En la unión neuromuscular ese neurotransmisor es acetilcolina.\n\nEn el músculo la contraparte del botón es la placa motora terminal, y la transmision tiene un margen de seguridad muy alto: casi cada potencial de accion de la motoneurona produce uno en la fibra muscular. Eso contrasta con las sinapsis centrales, donde hacen falta muchas entradas coincidentes para que la célula postsinaptica dispare.",
+      "analogy": "Es el puerto de salida: el mensaje eléctrico se traduce a una señal química que cruza el espacio y se vuelve a traducir del otro lado.",
+      "misconception": "El potencial de accion no cruza la sinapsis. Se detiene en el botón; lo que cruza es una molécula, y del otro lado se genera una señal nueva.",
+      "references": [
+        "kandel2021"
+      ],
+      "instances": [
+        "synaptic_bouton_01",
+        "synaptic_bouton_02",
+        "synaptic_bouton_03",
+        "synaptic_bouton_04",
+        "synaptic_bouton_05",
+        "synaptic_bouton_06"
+      ]
+    }
+  ],
+  "references": {
+    "kandel2021": "Kandel, E. R., Koester, J. D., Mack, S. H., & Siegelbaum, S. A. (Eds.). (2021). Principles of neural science (6.ª ed.). McGraw Hill.",
+    "salzer2015": "Salzer, J. L. (2015). Schwann cell myelination. Cold Spring Harbor Perspectives in Biology, 7(8), a020529. https://doi.org/10.1101/cshperspect.a020529",
+    "rasband2021": "Rasband, M. N., & Peles, E. (2021). Mechanisms of node of Ranvier assembly. Nature Reviews Neuroscience, 22(1), 7-20. https://doi.org/10.1038/s41583-020-00406-8",
+    "stassart2018": "Stassart, R. M., Mobius, W., Nave, K.-A., & Edgar, J. M. (2018). The axón-myelin unit in development and degenerative disease. Frontiers in Neuroscience, 12, 467. https://doi.org/10.3389/fnins.2018.00467",
+    "jessen2015": "Jessen, K. R., Mirsky, R., & Lloyd, A. C. (2015). Schwann cells: Development and role in nerve repair. Cold Spring Harbor Perspectives in Biology, 7(7), a020487. https://doi.org/10.1101/cshperspect.a020487",
+    "salzer2016": "Salzer, J. L., & Zalc, B. (2016). Myelination. Current Biology, 26(20), R971-R975. https://doi.org/10.1016/j.cub.2016.07.074"
+  },
+  "citation_style": "APA 7"
+}

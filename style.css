@@ -1,0 +1,681 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   NEURONA AR · DUNNE
+   Dirección de arte: minimalismo editorial científico.
+
+   Reglas que gobiernan todo lo demás:
+
+   1. El modelo es el héroe absoluto. La página no tiene scroll: es un
+      escenario. Todo lo que no sea el modelo o una línea de texto vive en
+      una ventana que se abre y se cierra.
+
+   2. La portada se retira. El título es monumental al entrar y se aparta en
+      cuanto la persona toca el modelo, en lugar de competir con él para
+      siempre.
+
+   3. Nada de cajas. La separación se logra con velos, máscaras de gradiente
+      y aire. No hay un solo borde de 1px delimitando un panel.
+
+   4. Un único acento. El modelo carga nueve colores didácticos; si el cromo
+      compitiera, ganaría el cromo y perdería la lectura anatómica.
+
+   Nota de compatibilidad: cada unidad dvh/svh lleva antes su respaldo en vh.
+   Sin eso, un navegador que no entienda la unidad descarta la declaración
+   entera y el lienzo queda con altura cero.
+   ========================================================================== */
+
+:root{
+  --void:#070c12;
+  --ink:#0b1218;
+  --ink-lift:#101a24;
+
+  --type:#f0f3f7;
+  --murmur:#8fa1b4;
+  --whisper:#5d7085;
+
+  --flame:#ff8419;
+
+  --veil:rgba(11,18,24,.86);
+  --veil-soft:rgba(11,18,24,.42);
+  --veil-none:rgba(11,18,24,0);
+  --tint:rgba(240,243,247,.06);
+
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif;
+  --mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+
+  --gutter:clamp(18px,4.6vw,80px);
+  --measure:34em;
+}
+
+@media (prefers-color-scheme:light){
+  :root{
+    --void:#e9e2d4;
+    --ink:#f1ebdf;
+    --ink-lift:#e6dece;
+
+    --type:#141a20;
+    --murmur:#5c6673;
+    --whisper:#8a9099;
+
+    --flame:#c05000;
+
+    --veil:rgba(241,235,223,.88);
+    --veil-soft:rgba(241,235,223,.46);
+    --veil-none:rgba(241,235,223,0);
+    --tint:rgba(20,26,32,.06);
+  }
+}
+
+*{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--type);
+  font-family:var(--serif);
+  font-size:clamp(16px,1.05vw,18px);
+  line-height:1.6;
+  overflow:hidden;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+::selection{background:var(--flame);color:var(--void)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--flame);outline-offset:3px}
+
+.meta{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--whisper);
+}
+
+/* Voz de control: monoespaciada, diminuta, subrayada con un hilo. Nunca un
+   botón relleno. */
+.act{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--murmur);
+  background:none;
+  border:0;
+  padding:5px 0;
+  cursor:pointer;
+  background-image:linear-gradient(var(--whisper),var(--whisper));
+  background-size:100% 1px;
+  background-position:0 100%;
+  background-repeat:no-repeat;
+  transition:color .18s ease;
+}
+.act:hover{color:var(--type)}
+.act-flame{
+  color:var(--flame);
+  background-image:linear-gradient(var(--flame),var(--flame));
+}
+.act-flame:hover{color:var(--type)}
+.act-bare{background-image:none}
+
+/* ============================================================ escenario == */
+
+.stage{
+  position:relative;
+  height:100vh;
+  height:100dvh;
+  background:radial-gradient(120% 100% at 50% 6%,var(--ink-lift) 0%,var(--void) 74%);
+  overflow:hidden;
+  isolation:isolate;
+}
+
+.canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:transparent;
+  --progress-bar-color:var(--flame);
+  --progress-bar-height:1px;
+  --min-hotspot-opacity:0;
+  --poster-color:transparent;
+}
+
+/* ============================================================= cabecera == */
+
+.masthead{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:clamp(14px,2vw,26px) var(--gutter);
+  pointer-events:none;
+}
+.masthead a,.masthead button{pointer-events:auto}
+
+.sigil{display:flex;align-items:center;gap:10px}
+.sigil img{display:block;height:28px;width:auto}
+.sigil b{
+  font-family:var(--mono);
+  font-size:11.5px;
+  font-weight:400;
+  letter-spacing:.2em;
+}
+.sigil span{display:block}
+.sigil small{
+  display:block;
+  margin-top:2px;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.1em;
+  color:var(--whisper);
+}
+
+.helm{display:flex;align-items:center;gap:clamp(14px,2vw,26px)}
+
+/* ============================================================== portada == */
+
+/* Estado inicial. Se retira en cuanto la persona toca el modelo, así que
+   puede permitirse ser monumental sin estorbar después. */
+.cover{
+  position:absolute;
+  left:var(--gutter);
+  top:50%;
+  transform:translateY(-50%);
+  z-index:4;
+  max-width:min(16em,68vw);
+  transition:opacity .5s ease,transform .5s ease,visibility .5s;
+}
+.stage[data-mode="explore"] .cover{
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-54%);
+  pointer-events:none;
+}
+
+/* Velo suave detrás del título, solo del lado del texto, para que el
+   contraste alcance aunque el modelo pase por detrás. */
+.cover::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-14vh calc(-1 * var(--gutter)) -14vh calc(-1 * var(--gutter));
+  background:linear-gradient(to right,var(--veil) 0%,var(--veil-soft) 55%,var(--veil-none) 100%);
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 46%,transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 46%,transparent 100%);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .cover::before{
+    backdrop-filter:blur(14px) saturate(125%);
+    -webkit-backdrop-filter:blur(14px) saturate(125%);
+  }
+}
+
+.kicker{
+  margin:0 0 clamp(10px,1.6vh,20px);
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.19em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+
+.monument{
+  margin:0;
+  font-weight:400;
+  font-size:clamp(2.7rem,9.5vw,8.5rem);
+  line-height:.88;
+  letter-spacing:-.035em;
+  text-wrap:balance;
+}
+.monument em{font-style:italic;color:var(--flame)}
+
+.dek{
+  margin:clamp(14px,2.2vh,26px) 0 clamp(18px,2.6vh,30px);
+  max-width:25ch;
+  font-size:clamp(14.5px,1vw,17px);
+  line-height:1.55;
+  color:var(--murmur);
+}
+
+/* ============================================================= cintillo == */
+
+/* Una sola línea de texto sobre el modelo. Todo lo demás está a un toque de
+   distancia, en una ventana. */
+.caption{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:4;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;
+  gap:clamp(14px,3vw,44px);
+  padding:clamp(40px,7vh,90px) var(--gutter) clamp(16px,2.6vh,30px);
+  pointer-events:none;
+  background:linear-gradient(to top,var(--veil) 0%,var(--veil-soft) 52%,var(--veil-none) 100%);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,#000 62%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 0%,#000 62%,transparent 100%);
+}
+.caption > *{pointer-events:auto}
+
+.legend{min-width:0}
+
+.folio{
+  margin:0 0 5px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.2em;
+  color:var(--flame);
+}
+
+.rubric{
+  margin:0 0 4px;
+  font-weight:400;
+  font-size:clamp(1.15rem,2.1vw,1.85rem);
+  line-height:1.1;
+  letter-spacing:-.02em;
+}
+
+.gloss{
+  margin:0;
+  max-width:46ch;
+  font-size:clamp(13.5px,.95vw,15.5px);
+  line-height:1.45;
+  color:var(--murmur);
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.baton{
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,1.8vw,22px);
+  white-space:nowrap;
+}
+.tally{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.16em;
+  color:var(--whisper);
+  font-variant-numeric:tabular-nums;
+}
+
+/* =========================================================== marcadores == */
+
+/* Punto pequeño con área de toque grande: el blanco visual mide 13px, el
+   blanco táctil 36px, que es el mínimo usable con el dedo. */
+.hotspot{
+  width:36px;
+  height:36px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:none;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+}
+.hotspot::before{
+  content:"";
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:var(--flame);
+  box-shadow:0 0 0 5px rgba(255,132,25,.16),0 0 14px rgba(255,132,25,.32);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.hotspot::after{
+  content:attr(data-n);
+  position:absolute;
+  left:30px;
+  top:6px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.1em;
+  color:var(--flame);
+  opacity:0;
+  transition:opacity .18s ease;
+  pointer-events:none;
+}
+.hotspot:hover::before{transform:scale(1.25)}
+.hotspot:hover::after{opacity:1}
+.hotspot.is-active::before{
+  transform:scale(1.4);
+  box-shadow:0 0 0 7px rgba(255,132,25,.22),0 0 22px rgba(255,132,25,.48);
+}
+.hotspot.is-active::after{opacity:1}
+.hotspot:not([data-visible]){opacity:0;pointer-events:none}
+
+/* ============================================================== ventanas == */
+
+/* La información profunda vive aquí, no en la página. Así el escenario
+   queda limpio y no hay cambio de contexto por scroll. */
+dialog{
+  width:min(58ch,calc(100vw - 2 * var(--gutter)));
+  max-height:84vh;              /* respaldo: si dvh no existe, min() se descartaría */
+  max-height:min(84vh,84dvh);
+  margin:auto;
+  padding:0;
+  border:0;
+  background:var(--ink);
+  color:var(--type);
+  overflow:hidden;
+}
+dialog::backdrop{
+  background:rgba(4,8,12,.66);
+  backdrop-filter:blur(14px) saturate(120%);
+  -webkit-backdrop-filter:blur(14px) saturate(120%);
+}
+@media (prefers-color-scheme:light){
+  dialog::backdrop{background:rgba(233,226,212,.72)}
+}
+
+.sheet{
+  max-height:inherit;
+  overflow-y:auto;
+  padding:clamp(26px,4vw,48px) clamp(22px,4vw,52px) clamp(30px,4vw,52px);
+  scrollbar-width:thin;
+  scrollbar-color:var(--whisper) transparent;
+}
+
+.sheet-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:clamp(18px,3vh,30px);
+}
+
+.sheet h2{
+  margin:8px 0 14px;
+  font-weight:400;
+  font-size:clamp(1.6rem,3.4vw,2.6rem);
+  line-height:1.02;
+  letter-spacing:-.028em;
+}
+
+.sheet h3{
+  margin:26px 0 8px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:400;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+
+.sheet p{margin:0 0 12px;color:var(--murmur)}
+.sheet p:last-child{margin-bottom:0}
+.sheet .lede{color:var(--type);font-size:clamp(16px,1.15vw,18.5px)}
+.sheet b{color:var(--type);font-weight:400}
+.sheet code{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--type);
+  background:var(--tint);
+  padding:2px 6px;
+}
+
+.caveat{
+  margin:20px 0 0;
+  padding-left:15px;
+  border-left:2px solid var(--flame);
+  font-size:14.5px;
+  color:var(--murmur);
+}
+
+.sources{
+  margin:26px 0 0;
+  font-family:var(--sans);
+  font-size:11px;
+  line-height:1.55;
+  color:var(--whisper);
+}
+.sources span{
+  display:block;
+  margin-bottom:8px;
+  padding-left:1.15em;
+  text-indent:-1.15em;
+}
+
+/* Los niveles y el emblema viven dentro de la ventana "cómo usarla". */
+.ladder{margin:0;padding:0;list-style:none;counter-reset:rung}
+.ladder li{
+  counter-increment:rung;
+  position:relative;
+  padding:0 0 clamp(28px,4vh,44px) clamp(40px,5vw,58px);
+}
+.ladder li:last-child{padding-bottom:0}
+.ladder li::before{
+  content:counter(rung,decimal-leading-zero);
+  position:absolute;
+  left:0;
+  top:.4em;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.16em;
+  color:var(--flame);
+}
+.ladder h3{
+  margin:0 0 10px;
+  font-family:var(--serif);
+  font-size:clamp(1.15rem,1.9vw,1.5rem);
+  font-weight:400;
+  letter-spacing:-.018em;
+  text-transform:none;
+  color:var(--type);
+}
+
+.deeds{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:clamp(14px,2.4vw,30px);
+  margin:18px 0 12px;
+}
+
+.aside-note{font-size:14px;color:var(--whisper)}
+
+.emblem{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:clamp(20px,4vw,44px);
+  align-items:start;
+  margin-top:clamp(26px,4vh,42px);
+}
+.emblem figure{margin:0}
+.emblem img{
+  display:block;
+  width:clamp(120px,26vw,170px);
+  height:auto;
+  padding:10px;
+  background:#fff;
+}
+.emblem figcaption{margin-top:10px}
+
+/* Diagnóstico: pares clave-valor, sin tabla ni marco. */
+.probe{
+  margin:0;
+  font-family:var(--mono);
+  font-size:12px;
+  line-height:1.75;
+}
+.probe div{
+  display:grid;
+  grid-template-columns:minmax(0,13em) minmax(0,1fr);
+  gap:8px;
+}
+.probe dt{color:var(--whisper);letter-spacing:.06em}
+.probe dd{margin:0;color:var(--type);word-break:break-word}
+.probe .bad{color:var(--flame)}
+
+/* ================================================================ falla == */
+
+.fault{
+  position:absolute;
+  left:var(--gutter);
+  right:var(--gutter);
+  top:50%;
+  transform:translateY(-50%);
+  z-index:6;
+  max-width:52ch;
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.6;
+  color:var(--murmur);
+}
+.fault[hidden]{display:none}
+.fault b{display:block;margin-bottom:8px;color:var(--type);font-size:16px;font-family:var(--serif);font-weight:400}
+.fault code{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--flame);
+  word-break:break-all;
+}
+
+/* =========================================== documento de instrucciones == */
+
+.folio-doc{
+  max-width:calc(var(--measure) + 8em);
+  padding:clamp(84px,12vh,150px) var(--gutter) clamp(56px,9vh,110px);
+}
+.folio-doc h1{
+  margin:14px 0 18px;
+  font-weight:400;
+  font-size:clamp(2rem,5.2vw,3.6rem);
+  line-height:.99;
+  letter-spacing:-.032em;
+}
+.folio-doc .dek{margin:0 0 clamp(36px,5vh,64px);max-width:38ch}
+.folio-doc section{padding:0 0 clamp(36px,5vh,64px)}
+.folio-doc h2{
+  margin:0 0 16px;
+  font-weight:400;
+  font-size:clamp(1.3rem,2.4vw,1.9rem);
+  letter-spacing:-.02em;
+}
+.folio-doc h3{
+  margin:26px 0 10px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:400;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+.folio-doc p,.folio-doc li{color:var(--murmur)}
+.folio-doc ol,.folio-doc ul{margin:0 0 16px;padding-left:1.4em}
+.folio-doc li{margin-bottom:9px}
+.folio-doc li b{color:var(--type);font-weight:400}
+.folio-doc code{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--type);
+  background:var(--tint);
+  padding:2px 6px;
+}
+.folio-doc a:not(.act){
+  color:var(--type);
+  background-image:linear-gradient(var(--whisper),var(--whisper));
+  background-size:100% 1px;
+  background-position:0 92%;
+  background-repeat:no-repeat;
+}
+.folio-doc a:not(.act):hover{color:var(--flame)}
+
+.reel{width:100%;aspect-ratio:16/9;border:0;background:var(--void)}
+
+.colophon{
+  display:grid;
+  gap:10px;
+  max-width:var(--measure);
+  padding:0 var(--gutter) clamp(48px,7vh,88px);
+  font-family:var(--sans);
+  font-size:13px;
+  line-height:1.65;
+  color:var(--murmur);
+}
+.colophon b{color:var(--type);font-weight:600}
+
+.margin-note{
+  margin:20px 0 0;
+  padding-left:16px;
+  border-left:2px solid var(--flame);
+  font-size:15px;
+  color:var(--murmur);
+}
+
+.doc-body{overflow:auto;height:auto}
+
+/* ================================================================ móvil == */
+
+/* En vertical el modelo se queda con la mayor parte de la pantalla. El
+   cintillo es una franja, no un panel, y el título de portada se encoge para
+   no tapar la neurona. */
+@media (max-width:900px){
+  .cover{
+    top:auto;
+    bottom:38%;
+    transform:none;
+    max-width:none;
+    right:var(--gutter);
+  }
+  .stage[data-mode="explore"] .cover{transform:translateY(12px)}
+  .cover::before{
+    inset:-8vh calc(-1 * var(--gutter));
+    background:linear-gradient(to top,var(--veil) 0%,var(--veil-soft) 70%,var(--veil-none) 100%);
+    -webkit-mask-image:linear-gradient(to top,#000 0%,#000 64%,transparent 100%);
+    mask-image:linear-gradient(to top,#000 0%,#000 64%,transparent 100%);
+  }
+  .monument{font-size:clamp(2.3rem,10.5vw,3.6rem)}
+  .dek{max-width:32ch;font-size:14.5px}
+
+  .caption{
+    grid-template-columns:100%;
+    align-items:start;
+    gap:12px;
+    padding-top:clamp(52px,10vh,90px);
+  }
+  .baton{justify-content:space-between}
+  .gloss{-webkit-line-clamp:3}
+
+  .emblem{grid-template-columns:100%}
+  .emblem figure{justify-self:start}
+}
+
+/* Horizontal en teléfono: muy poca altura, así que el cintillo se reduce a
+   una sola línea y el resto se consulta en la ventana. */
+@media (max-height:520px) and (orientation:landscape){
+  .cover{top:auto;bottom:auto;transform:none;max-width:min(14em,52vw)}
+  .monument{font-size:clamp(1.9rem,6vw,3rem)}
+  .dek{display:none}
+  .caption{
+    grid-template-columns:minmax(0,1fr) auto;
+    padding-top:clamp(28px,6vh,50px);
+    padding-bottom:12px;
+  }
+  .rubric{font-size:1.05rem;margin-bottom:2px}
+  .gloss{-webkit-line-clamp:1;font-size:13px}
+  .masthead small{display:none}
+}
+
+@media (max-width:560px){
+  .masthead small{display:none}
+  .sigil img{height:24px}
+  .helm{gap:14px}
+}

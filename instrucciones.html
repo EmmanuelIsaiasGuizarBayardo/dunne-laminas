@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Instalación y uso · Neurona AR · DUNNE</title>
+<meta name="description" content="Cómo usar Neurona AR: visor 3D en el navegador, realidad aumentada sin app en Android e iPhone, e instalación del APK con marcador.">
+<meta name="theme-color" content="#0b1218">
+<link rel="icon" href="./assets/Dunne_oscuros.png">
+<link rel="apple-touch-icon" href="./assets/Dunne_oscuros.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+
+<body class="doc-body" style="overflow:auto">
+
+<header class="masthead">
+  <a class="sigil" href="./index.html">
+    <img src="./assets/Dunne_oscuros.png" alt="Logo de DUNNE" width="30" height="30">
+    <span>
+      <b>DUNNE</b>
+      <small>División Universitaria de Neuroingeniería · UNAM</small>
+    </span>
+  </a>
+  <p class="meta">Neurona AR · v1.2</p>
+</header>
+
+<main>
+<article class="folio-doc">
+
+  <p class="kicker">Manual</p>
+  <h1>Instalación y uso</h1>
+  <p class="dek">
+    Tres caminos, de menos a más fricción. Empieza por el primero: en la
+    mayoría de los casos es el único que necesitas.
+  </p>
+
+  <section>
+    <h2>1 · Visor 3D en el navegador</h2>
+    <p>
+      Abre la <a href="./index.html">página principal</a> y ya está. Gira el
+      modelo con un dedo, acércalo con dos y toca los puntos para leer sobre
+      cada estructura. Funciona en cualquier dispositivo con navegador
+      actualizado y no requiere permisos ni instalación.
+    </p>
+    <p class="margin-note">
+      Para un taller con muchas personas este es el camino recomendado: se
+      comparte el enlace o el QR y cada quien entra desde su propio dispositivo.
+    </p>
+  </section>
+
+  <section>
+    <h2>2 · Realidad aumentada sin instalar nada</h2>
+    <p>
+      En la página principal aparece <b>Verla en tu espacio</b>. Al tocarlo, el
+      sistema operativo abre su propio visor de AR y coloca la neurona en el
+      piso o en una mesa, a un metro de largo. Puedes caminar alrededor.
+    </p>
+
+    <h3>Android</h3>
+    <ol>
+      <li>Usa Chrome y toca <b>Verla en tu espacio</b>.</li>
+      <li>Si el sistema lo pide, instala o actualiza <b>Servicios de Google Play para RA</b>; es un componente del sistema, no una app nuestra.</li>
+      <li>Mueve el teléfono despacio hasta que detecte el piso y toca para colocar el modelo.</li>
+    </ol>
+
+    <h3>iPhone y iPad</h3>
+    <ol>
+      <li>Usa Safari y toca <b>Verla en tu espacio</b>.</li>
+      <li>Se abre AR Quick Look, que ya viene en iOS; concede el acceso a la cámara.</li>
+      <li>Apunta al piso y espera a que aparezca la neurona.</li>
+    </ol>
+
+    <p class="margin-note">
+      Si el enlace no aparece o dice <b>AR requiere HTTPS</b>, la página se
+      está sirviendo por HTTP. La realidad aumentada de Android es imposible
+      así: WebXR necesita contexto seguro y Scene Viewer, la app del sistema
+      que abre el modelo, solo acepta direcciones HTTPS. Probado desde
+      <code>mau897.github.io</code> funciona; desde
+      <code>python -m http.server</code> en la red local, no. El visor 3D
+      funciona igual en ambos casos.
+    </p>
+  </section>
+
+  <section>
+    <h2>3 · App de Android con marcador</h2>
+    <p>
+      La app añade el reconocimiento del marcador impreso y los módulos
+      interactivos hechos en Unity. Como se distribuye fuera de Google Play,
+      Android pedirá autorización explícita para instalarla.
+    </p>
+    <ol>
+      <li>Descarga el APK desde la página principal.</li>
+      <li>Abre el archivo descargado.</li>
+      <li>Si Android bloquea la instalación, activa <b>Instalar apps desconocidas</b> para el navegador o el gestor de archivos que usaste.</li>
+      <li>Confirma e instala.</li>
+      <li>Abre la app, apunta la cámara al marcador y toca las zonas de la neurona.</li>
+    </ol>
+
+    <h3>Verifica el archivo antes de instalarlo</h3>
+    <p>
+      Cuando se instala una app fuera de la tienda conviene comprobar que el
+      archivo es el que publicamos. En una computadora, ejecuta
+      <code>shasum -a 256 NeuronaAR5.apk</code> y compara el resultado con la
+      suma publicada en la página del release.
+    </p>
+
+    <p class="margin-note">
+      No hace falta activar el modo desarrollador ni la depuración USB. Si
+      alguna guía lo pide, se puede ignorar: para instalar un APK basta con
+      permitir orígenes desconocidos, y activar la depuración USB deja el
+      dispositivo más expuesto sin ninguna ventaja aquí.
+    </p>
+  </section>
+
+  <section>
+    <h2>Video demostrativo</h2>
+    <iframe class="reel"
+      src="https://www.youtube-nocookie.com/embed/2lNfAXojsbw"
+      title="Demostración de Neurona AR: reconocimiento del marcador e interacción con la neurona"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen></iframe>
+  </section>
+
+  <section>
+    <h2>Si algo no funciona</h2>
+    <ul>
+      <li><b>El modelo no carga y la página muestra un aviso:</b> el aviso dice qué archivo falta y con qué código respondió el servidor. Empieza por ahí.</li>
+      <li><b>El modelo no carga y no hay aviso:</b> la página descarga unos 2 MB la primera vez; espera en una red estable.</li>
+      <li><b>Abriste el archivo con doble clic:</b> el navegador bloquea la lectura de archivos locales. Sírvelo con <code>python -m http.server</code> y entra a <code>http://localhost:8000</code>.</li>
+      <li><b>La app se cierra al abrir la cámara:</b> revisa que le hayas concedido el permiso de cámara en los ajustes del sistema.</li>
+      <li><b>El marcador no se reconoce:</b> necesita luz uniforme y estar plano. Un marcador arrugado, con reflejos o impreso muy pequeño no se detecta de forma estable.</li>
+    </ul>
+  </section>
+
+  <p><a class="act" href="./index.html">Volver a la lámina</a></p>
+
+</article>
+</main>
+
+<footer class="colophon">
+  <p>
+    <b>Neurona AR</b> · División Universitaria de Neuroingeniería, UNAM.
+    Modelo 3D y aplicación en Unity: Mauricio Mendiola Rivera.
+  </p>
+</footer>
+
+</body>
+</html>
