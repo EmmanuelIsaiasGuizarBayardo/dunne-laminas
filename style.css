@@ -126,32 +126,28 @@ a{color:inherit;text-decoration:none}
 .act-flame:hover{color:var(--type)}
 .act-bare{background-image:none}
 
-/* Botón de AR. Centrado y por debajo de la cabecera: model-viewer no
-   posiciona el botón que se le entrega por slot, y sin estas reglas queda
-   arriba a la izquierda, encimado con el logo. */
-.ar-center{
+/* Botón de AR. Ya no se entrega por slot a model-viewer: es un elemento de
+   la página que llama a activateAR(), porque el slot lo posiciona el propio
+   componente y no hay forma confiable de centrarlo desde fuera. Aquí el
+   posicionamiento es enteramente nuestro. */
+.ar-launch{
   position:absolute;
   left:50%;
-  top:clamp(58px,8.5vh,100px);
+  top:clamp(60px,9vh,104px);
   transform:translateX(-50%);
-  z-index:4;
-  padding:9px 15px;
+  z-index:5;
+  padding:10px 16px;
   background:var(--veil);
   background-image:none;
   white-space:nowrap;
+  text-align:center;
 }
+.ar-launch[hidden]{display:none}
 @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .ar-center{
+  .ar-launch{
     backdrop-filter:blur(14px) saturate(130%);
     -webkit-backdrop-filter:blur(14px) saturate(130%);
   }
-}
-/* Si el origen es HTTP el botón se muda al cintillo y deja de flotar. */
-.baton .ar-center{
-  position:static;
-  transform:none;
-  padding:5px 0;
-  background:none;
 }
 
 /* ============================================================ escenario == */
@@ -361,14 +357,17 @@ a{color:inherit;text-decoration:none}
 }
 .hotspot::before{
   content:"";
-  width:17px;
-  height:17px;
+  width:12px;
+  height:12px;
   border-radius:50%;
   background:var(--flame);
+  /* El contorno va DENTRO del punto, en su borde: así el filo contrasta
+     contra las vainas amarillas y el núcleo naranja del propio modelo sin
+     que el marcador crezca hacia fuera. El resplandor se mantiene mínimo:
+     lo que hace localizable al punto es el filo, no el brillo. */
   box-shadow:
-    0 0 0 2.5px var(--halo),
-    0 0 0 5px rgba(255,132,25,.5),
-    0 0 18px rgba(255,132,25,.42);
+    inset 0 0 0 2px var(--halo),
+    0 0 8px rgba(255,132,25,.32);
   transition:transform .18s ease,box-shadow .18s ease;
 }
 
@@ -377,10 +376,10 @@ a{color:inherit;text-decoration:none}
 .hotspot::after{
   content:"";
   position:absolute;
-  width:17px;
-  height:17px;
+  width:12px;
+  height:12px;
   border-radius:50%;
-  box-shadow:0 0 0 2px var(--flame);
+  box-shadow:0 0 0 1.5px var(--flame);
   opacity:0;
   animation:locate 2.4s ease-out 3;
   pointer-events:none;
@@ -398,10 +397,14 @@ a{color:inherit;text-decoration:none}
    que el cintillo no existe y esta etiqueta sí. */
 .hotspot .tag{
   position:absolute;
-  left:31px;
+  left:26px;
   top:50%;
   transform:translateY(-50%);
-  white-space:nowrap;
+  /* Envuelve en lugar de recortarse o salirse: un marcador cerca del borde
+     derecho dejaría el nombre fuera de la pantalla. */
+  max-width:min(44vw,20ch);
+  white-space:normal;
+  line-height:1.35;
   font-family:var(--mono);
   font-size:10.5px;
   letter-spacing:.12em;
@@ -420,23 +423,27 @@ a{color:inherit;text-decoration:none}
   }
 }
 
-.hotspot:hover::before{transform:scale(1.18)}
+.hotspot:hover::before{transform:scale(1.2)}
 .hotspot:hover .tag{opacity:1}
 .hotspot.is-active::before{
   transform:scale(1.3);
   box-shadow:
-    0 0 0 3px var(--halo),
-    0 0 0 8px rgba(255,132,25,.44),
-    0 0 28px rgba(255,132,25,.6);
+    inset 0 0 0 2.5px var(--halo),
+    0 0 14px rgba(255,132,25,.55);
 }
 .hotspot.is-active .tag{opacity:1}
 .hotspot:not([data-visible]){opacity:0;pointer-events:none}
 
-/* En AR el cintillo de la página no se presenta, así que se muestran las
-   etiquetas de todos los marcadores visibles, algo más grandes, pensadas
-   para leerse a la distancia de un brazo. */
-.canvas[data-ar="on"] .hotspot[data-visible] .tag{opacity:1;font-size:12.5px}
-.canvas[data-ar="on"] .hotspot::before{width:19px;height:19px}
+/* Etiquetas apagadas. Un rótulo permanente por estructura tapa justamente
+   la neurona que se vino a ver, así que en AR el estado inicial es apagado:
+   se enciende la del marcador que se toca y al volver a tocarlo se apaga.
+   Esta regla suma más clases que la del marcador activo, así que gana sin
+   necesidad de !important. */
+.canvas[data-tags="off"] .hotspot .tag{opacity:0}
+
+/* En AR el punto crece apenas, para el dedo a la distancia de un brazo. */
+.canvas[data-ar="on"] .hotspot::before{width:14px;height:14px}
+.canvas[data-ar="on"] .hotspot .tag{font-size:11px;letter-spacing:.1em}
 
 /* ============================================================== ventanas == */
 

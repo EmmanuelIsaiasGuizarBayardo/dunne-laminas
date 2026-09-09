@@ -9,7 +9,16 @@
 
 <link rel="canonical" href="https://mau897.github.io/">
 <link rel="icon" href="./assets/Dunne_oscuros.png">
-<link rel="apple-touch-icon" href="./assets/Dunne_oscuros.png">
+<link rel="apple-touch-icon" href="./assets/icon-192.png">
+
+<!-- Instalable: al añadirla a la pantalla de inicio abre sin barra de
+     direcciones, que es la única forma de eliminarla del todo en móvil.
+     El botón de pantalla completa cubre el caso de uso desde el navegador. -->
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Neurona AR">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Neurona AR · DUNNE">
@@ -22,7 +31,7 @@
 <meta name="twitter:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
 <meta name="twitter:image" content="https://mau897.github.io/assets/poster.webp">
 
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=1.4">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <!-- Configuración de la lámina. Para publicar otro modelo se duplica este
@@ -64,8 +73,14 @@
     min-field-of-view="20deg"
     max-field-of-view="55deg"
     interaction-prompt="none">
-    <button class="act act-flame ar-center" slot="ar-button" id="arButton">Verla en tu espacio</button>
+    <!-- Marcador vacío: ocupa el slot para que model-viewer no dibuje su
+         propio botón de AR. El botón real está afuera, en la página. -->
+    <span slot="ar-button" hidden aria-hidden="true"></span>
   </model-viewer>
+
+  <button type="button" class="act act-flame ar-launch" id="arButton" hidden>
+    Verla en tu espacio
+  </button>
 
   <header class="masthead">
     <a class="sigil" href="./index.html">
@@ -76,6 +91,7 @@
       </span>
     </a>
     <div class="helm">
+      <button type="button" class="act act-bare" id="fullscreen" hidden>Pantalla completa</button>
       <button type="button" class="act act-bare" id="openWays">Cómo usarla</button>
       <button type="button" class="act act-bare" id="openProbe">Diagnóstico</button>
     </div>
@@ -280,6 +296,11 @@
 </dialog>
 
 <script type="module">
+/* Sello de versión. Aparece como primer renglón del diagnóstico para poder
+   confirmar de un vistazo qué build está publicado, sin depender de mirar
+   síntomas. Súbelo cada vez que cambies index.html o style.css. */
+const BUILD = "1.3 · 9 sep 2026";
+
 const lamina = JSON.parse(document.getElementById("lamina").textContent);
 
 const $ = id => document.getElementById(id);
@@ -317,6 +338,14 @@ const structures = new Map();
 let references = {};
 let tour = [];
 let current = 0;
+let tagsOn = true;
+
+/** Enciende o apaga las etiquetas de los marcadores. */
+function setTags(on) {
+  tagsOn = on;
+  viewer.dataset.tags = on ? "on" : "off";
+}
+setTags(true);
 
 function reportFault(title, detail) {
   fault.innerHTML = `<b>${title}</b>${detail}`;
@@ -367,7 +396,14 @@ async function load() {
     dot.appendChild(label);
 
     dot.setAttribute("aria-label", structure ? structure.label : cls);
-    dot.addEventListener("click", () => { explore(); show(i); });
+    dot.addEventListener("click", () => {
+      explore();
+      // Tocar el marcador ya activo apaga o enciende su etiqueta; tocar otro
+      // la enciende en el nuevo. Es el interruptor que hacía falta en AR,
+      // donde un rótulo permanente por estructura tapa la neurona.
+      if (i === current && tagsOn) setTags(false);
+      else { setTags(true); show(i); }
+    });
     viewer.appendChild(dot);
   });
 
@@ -459,10 +495,28 @@ function webglRenderer() {
   }
 }
 
-const state = { model: "pendiente", error: "—", ar: "sin iniciar" };
+const state = {
+  model: "pendiente",
+  error: "—",
+  ar: "sin iniciar",
+  immersive: "sin comprobar",
+};
+
+/* La presencia de navigator.xr no basta: hay que preguntar si el dispositivo
+   soporta una sesión inmersiva de AR. Esa respuesta es la que determina si
+   model-viewer usa WebXR, y por tanto si las etiquetas de los marcadores
+   aparecen en AR, o si delega en Scene Viewer, donde es imposible. */
+if (navigator.xr?.isSessionSupported) {
+  navigator.xr.isSessionSupported("immersive-ar")
+    .then(ok => { state.immersive = ok ? "sí" : "no · usará Scene Viewer"; })
+    .catch(err => { state.immersive = `error: ${err.message}`; });
+} else {
+  state.immersive = "no · sin WebXR";
+}
 
 function fillProbe() {
   const rows = [
+    ["versión de la página", BUILD],
     ["contexto seguro", isSecureContext ? "sí" : "no · AR requiere HTTPS", !isSecureContext],
     ["origen", location.origin],
     ["model-viewer", customElements.get("model-viewer") ? "cargado" : "no cargado",
@@ -473,7 +527,13 @@ function fillProbe() {
       ? "suprimida · el origen es HTTP"
       : (viewer.canActivateAR ? "sí" : "no"), arSuppressed || !viewer.canActivateAR],
     ["WebXR", navigator.xr ? "presente" : "ausente", !navigator.xr],
+    ["AR inmersiva por WebXR", state.immersive, state.immersive !== "sí"],
     ["sesión AR", state.ar],
+    ["etiquetas", tagsOn ? "encendidas" : "apagadas"],
+    ["pantalla completa", document.fullscreenElement ? "activa"
+      : (fsSupported ? "disponible" : "no soportada · usa añadir a inicio")],
+    ["modo instalado", matchMedia("(display-mode: fullscreen)").matches
+      || matchMedia("(display-mode: standalone)").matches ? "sí" : "no"],
     ["renderizador", webglRenderer()],
     ["soporta dvh", CSS.supports("height", "1dvh") ? "sí" : "no", !CSS.supports("height", "1dvh")],
     ["viewport", `${innerWidth} × ${innerHeight} @ ${devicePixelRatio}x`],
@@ -493,12 +553,17 @@ viewer.addEventListener("load", () => {
 /* Estado de la sesión de AR. Solo el modo WebXR mantiene el DOM del visor
    sobre la cámara; Scene Viewer y Quick Look son apps del sistema que
    reciben nada más el archivo del modelo, así que ahí no hay anotaciones
-   posibles. Marcamos el visor para que las etiquetas de los marcadores se
-   muestren todas mientras dure la sesión. */
+   posibles.
+
+   Al entrar en AR las etiquetas se apagan: la neurona pasa a ocupar el
+   espacio real y los rótulos permanentes la taparían. Se enciende la que se
+   toque. Al salir se restablece el comportamiento de la página. */
 viewer.addEventListener("ar-status", event => {
   const status = event.detail.status;
   state.ar = status;
-  viewer.dataset.ar = status === "session-started" ? "on" : "off";
+  const inSession = status === "session-started";
+  viewer.dataset.ar = inSession ? "on" : "off";
+  setTags(!inSession);
 });
 
 viewer.addEventListener("error", event => {
@@ -520,24 +585,76 @@ setTimeout(() => {
   }
 }, 10000);
 
-/* En HTTP la AR de Android es imposible: WebXR necesita contexto seguro y
-   Scene Viewer exige una URL HTTPS. Se retira el atributo `ar` para que
-   model-viewer no muestre su propio botón, y el botón propio se muda al
-   cintillo convertido en una explicación: un control muerto sin motivo es
-   peor que no tenerlo. */
+/* Botón de AR propio, enganchado a la API en lugar de al slot. En HTTP la AR
+   de Android es imposible (WebXR necesita contexto seguro y Scene Viewer
+   exige HTTPS), así que ahí el botón explica el motivo en vez de fallar. */
 const arSuppressed = !isSecureContext;
+const arButton = $("arButton");
 
 if (arSuppressed) {
   viewer.removeAttribute("ar");
-  const arButton = $("arButton");
-  arButton.removeAttribute("slot");
   arButton.textContent = "¿Por qué no hay AR?";
   arButton.classList.remove("act-flame");
-  arButton.classList.add("act");
-  document.querySelector(".baton").appendChild(arButton);
+  arButton.hidden = false;
   arButton.addEventListener("click", () => {
     $("arOrigin").textContent = location.origin;
     open($("arHttps"));
+  });
+} else {
+  arButton.addEventListener("click", async () => {
+    try {
+      if (!viewer.loaded && typeof viewer.dismissPoster === "function") {
+        viewer.dismissPoster();
+      }
+      await viewer.activateAR();
+    } catch (err) {
+      state.error = `activateAR: ${err.message}`;
+      reportFault("No se pudo abrir la realidad aumentada",
+        `<code>${err.message}</code>. Abre <b>Diagnóstico</b> para ver el detalle.`);
+    }
+  });
+
+  // Solo aparece si el dispositivo puede realmente entrar en AR.
+  const revealAr = () => { arButton.hidden = !viewer.canActivateAR; };
+  viewer.addEventListener("load", revealAr);
+  setTimeout(revealAr, 1500);
+}
+
+/* ------------------------------------------------------ pantalla completa -- */
+
+/* La barra de direcciones de Chrome en Android se queda ocupando espacio.
+   La API de pantalla completa la retira; en iPhone no existe para elementos
+   arbitrarios, así que ahí el camino es añadir la página a la pantalla de
+   inicio, y por eso el control se oculta cuando no hay soporte. */
+const fsButton = $("fullscreen");
+const fsSupported = !!document.documentElement.requestFullscreen;
+
+if (fsSupported) {
+  fsButton.hidden = false;
+
+  const syncFsLabel = () => {
+    fsButton.textContent = document.fullscreenElement
+      ? "Salir de pantalla completa"
+      : "Pantalla completa";
+  };
+
+  const toggleFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+    } catch (err) {
+      state.error = `fullscreen: ${err.message}`;
+    }
+  };
+
+  fsButton.addEventListener("click", toggleFullscreen);
+  document.addEventListener("fullscreenchange", syncFsLabel);
+  syncFsLabel();
+
+  // "Explorar la lámina" ya es un gesto del usuario, que es lo que la API
+  // exige, y su intención es justamente ver el modelo sin estorbos.
+  $("enter").addEventListener("click", () => {
+    if (!document.fullscreenElement) toggleFullscreen();
   });
 }
 
