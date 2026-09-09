@@ -7,20 +7,20 @@
 <meta name="description" content="Explora una motoneurona en 3D y en realidad aumentada. Toca cada estructura para aprender sobre soma, dendritas, axón, mielina y sinapsis. División Universitaria de Neuroingeniería, UNAM.">
 <meta name="theme-color" content="#0b1218">
 
-<link rel="canonical" href="https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/">
+<link rel="canonical" href="https://mau897.github.io/">
 <link rel="icon" href="./assets/Dunne_oscuros.png">
 <link rel="apple-touch-icon" href="./assets/Dunne_oscuros.png">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Neurona AR · DUNNE">
 <meta property="og:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
-<meta property="og:url" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/">
-<meta property="og:image" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/assets/poster.webp">
+<meta property="og:url" content="https://mau897.github.io/">
+<meta property="og:image" content="https://mau897.github.io/assets/poster.webp">
 <meta property="og:locale" content="es_MX">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Neurona AR · DUNNE">
 <meta name="twitter:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
-<meta name="twitter:image" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/assets/poster.webp">
+<meta name="twitter:image" content="https://mau897.github.io/assets/poster.webp">
 
 <link rel="stylesheet" href="./style.css">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
@@ -64,7 +64,7 @@
     min-field-of-view="20deg"
     max-field-of-view="55deg"
     interaction-prompt="none">
-    <button class="act act-flame" slot="ar-button" id="arButton">Verla en tu espacio</button>
+    <button class="act act-flame ar-center" slot="ar-button" id="arButton">Verla en tu espacio</button>
   </model-viewer>
 
   <header class="masthead">
@@ -148,8 +148,14 @@
         <h3>En realidad aumentada, sin app</h3>
         <p>
           <b>Verla en tu espacio</b> coloca la neurona en el piso o la mesa, a
-          un metro de largo. Funciona en Android con Scene Viewer y en iPhone o
-          iPad con AR Quick Look, y requiere que la página se sirva por HTTPS.
+          un metro de largo. Requiere que la página se sirva por HTTPS.
+        </p>
+        <p class="aside-note">
+          Las etiquetas de cada estructura solo aparecen si la AR corre por
+          <b>WebXR</b>, dentro del navegador. Cuando Android delega en Scene
+          Viewer, o iOS en AR Quick Look, esas apps reciben únicamente el
+          archivo del modelo y no hay forma de mostrarles texto: la AR sirve
+          entonces para percibir la escala, y la lectura se hace en la página.
         </p>
       </li>
       <li>
@@ -188,7 +194,7 @@
         </p>
       </div>
       <figure>
-        <img src="./assets/qr_dunne.png" width="170" height="170"
+        <img src="./assets/qr_dunne.jpg" width="170" height="170"
              alt="Código QR que enlaza a mau897.github.io, la página de Neurona AR de DUNNE.">
         <figcaption class="meta">Escanéalo o compártelo</figcaption>
       </figure>
@@ -351,7 +357,15 @@ async function load() {
     dot.dataset.position = anchor.position.join(" ");
     dot.dataset.normal = anchor.normal.join(" ");
     dot.dataset.visibilityAttribute = "visible";
-    dot.dataset.n = String(i + 1).padStart(2, "0");
+
+    // La etiqueta va DENTRO del marcador a propósito: en AR por WebXR solo
+    // se presenta el DOM que desciende de <model-viewer>, así que el
+    // cintillo de la página desaparece y esto es lo único que queda.
+    const label = document.createElement("span");
+    label.className = "tag";
+    label.textContent = `${String(i + 1).padStart(2, "0")} · ${structure ? structure.label : cls}`;
+    dot.appendChild(label);
+
     dot.setAttribute("aria-label", structure ? structure.label : cls);
     dot.addEventListener("click", () => { explore(); show(i); });
     viewer.appendChild(dot);
@@ -445,7 +459,7 @@ function webglRenderer() {
   }
 }
 
-const state = { model: "pendiente", error: "—" };
+const state = { model: "pendiente", error: "—", ar: "sin iniciar" };
 
 function fillProbe() {
   const rows = [
@@ -458,7 +472,8 @@ function fillProbe() {
     ["AR disponible", arSuppressed
       ? "suprimida · el origen es HTTP"
       : (viewer.canActivateAR ? "sí" : "no"), arSuppressed || !viewer.canActivateAR],
-    ["WebXR", navigator.xr ? "presente" : "ausente"],
+    ["WebXR", navigator.xr ? "presente" : "ausente", !navigator.xr],
+    ["sesión AR", state.ar],
     ["renderizador", webglRenderer()],
     ["soporta dvh", CSS.supports("height", "1dvh") ? "sí" : "no", !CSS.supports("height", "1dvh")],
     ["viewport", `${innerWidth} × ${innerHeight} @ ${devicePixelRatio}x`],
@@ -473,6 +488,17 @@ function fillProbe() {
 viewer.addEventListener("load", () => {
   state.model = "cargado";
   fault.hidden = true;
+});
+
+/* Estado de la sesión de AR. Solo el modo WebXR mantiene el DOM del visor
+   sobre la cámara; Scene Viewer y Quick Look son apps del sistema que
+   reciben nada más el archivo del modelo, así que ahí no hay anotaciones
+   posibles. Marcamos el visor para que las etiquetas de los marcadores se
+   muestren todas mientras dure la sesión. */
+viewer.addEventListener("ar-status", event => {
+  const status = event.detail.status;
+  state.ar = status;
+  viewer.dataset.ar = status === "session-started" ? "on" : "off";
 });
 
 viewer.addEventListener("error", event => {
@@ -507,6 +533,7 @@ if (arSuppressed) {
   arButton.removeAttribute("slot");
   arButton.textContent = "¿Por qué no hay AR?";
   arButton.classList.remove("act-flame");
+  arButton.classList.add("act");
   document.querySelector(".baton").appendChild(arButton);
   arButton.addEventListener("click", () => {
     $("arOrigin").textContent = location.origin;

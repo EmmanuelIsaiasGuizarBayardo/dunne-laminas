@@ -40,6 +40,7 @@
   --veil-soft:rgba(11,18,24,.42);
   --veil-none:rgba(11,18,24,0);
   --tint:rgba(240,243,247,.06);
+  --halo:rgba(7,12,18,.9);
 
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif;
   --mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
@@ -65,6 +66,7 @@
     --veil-soft:rgba(241,235,223,.46);
     --veil-none:rgba(241,235,223,0);
     --tint:rgba(20,26,32,.06);
+    --halo:rgba(255,255,255,.94);
   }
 }
 
@@ -123,6 +125,34 @@ a{color:inherit;text-decoration:none}
 }
 .act-flame:hover{color:var(--type)}
 .act-bare{background-image:none}
+
+/* Botón de AR. Centrado y por debajo de la cabecera: model-viewer no
+   posiciona el botón que se le entrega por slot, y sin estas reglas queda
+   arriba a la izquierda, encimado con el logo. */
+.ar-center{
+  position:absolute;
+  left:50%;
+  top:clamp(58px,8.5vh,100px);
+  transform:translateX(-50%);
+  z-index:4;
+  padding:9px 15px;
+  background:var(--veil);
+  background-image:none;
+  white-space:nowrap;
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .ar-center{
+    backdrop-filter:blur(14px) saturate(130%);
+    -webkit-backdrop-filter:blur(14px) saturate(130%);
+  }
+}
+/* Si el origen es HTTP el botón se muda al cintillo y deja de flotar. */
+.baton .ar-center{
+  position:static;
+  transform:none;
+  padding:5px 0;
+  background:none;
+}
 
 /* ============================================================ escenario == */
 
@@ -295,10 +325,6 @@ a{color:inherit;text-decoration:none}
   font-size:clamp(13.5px,.95vw,15.5px);
   line-height:1.45;
   color:var(--murmur);
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
 }
 
 .baton{
@@ -317,11 +343,14 @@ a{color:inherit;text-decoration:none}
 
 /* =========================================================== marcadores == */
 
-/* Punto pequeño con área de toque grande: el blanco visual mide 13px, el
-   blanco táctil 36px, que es el mínimo usable con el dedo. */
+/* Punto con contorno y área de toque generosa. El contorno es lo que
+   permite encontrarlos: el modelo tiene amarillos y naranjas propios, así
+   que un punto naranja plano se pierde encima de una vaina de mielina. El
+   halo, oscuro en modo tinta y claro en pergamino, lo separa de cualquier
+   fondo. */
 .hotspot{
-  width:36px;
-  height:36px;
+  width:44px;
+  height:44px;
   padding:0;
   border:0;
   border-radius:50%;
@@ -332,34 +361,82 @@ a{color:inherit;text-decoration:none}
 }
 .hotspot::before{
   content:"";
-  width:13px;
-  height:13px;
+  width:17px;
+  height:17px;
   border-radius:50%;
   background:var(--flame);
-  box-shadow:0 0 0 5px rgba(255,132,25,.16),0 0 14px rgba(255,132,25,.32);
+  box-shadow:
+    0 0 0 2.5px var(--halo),
+    0 0 0 5px rgba(255,132,25,.5),
+    0 0 18px rgba(255,132,25,.42);
   transition:transform .18s ease,box-shadow .18s ease;
 }
+
+/* Pulso de localización: tres latidos al aparecer y se apaga. Los
+   marcadores se anuncian sin quedarse animados para siempre. */
 .hotspot::after{
-  content:attr(data-n);
+  content:"";
   position:absolute;
-  left:30px;
-  top:6px;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  box-shadow:0 0 0 2px var(--flame);
+  opacity:0;
+  animation:locate 2.4s ease-out 3;
+  pointer-events:none;
+}
+@keyframes locate{
+  0%{opacity:.85;transform:scale(1)}
+  70%,100%{opacity:0;transform:scale(2.7)}
+}
+@media (prefers-reduced-motion:reduce){
+  .hotspot::after{display:none}
+}
+
+/* Etiqueta dentro del marcador. Tiene que vivir aquí y no en la página: en
+   AR por WebXR solo se presenta el DOM que es hijo de <model-viewer>, así
+   que el cintillo no existe y esta etiqueta sí. */
+.hotspot .tag{
+  position:absolute;
+  left:31px;
+  top:50%;
+  transform:translateY(-50%);
+  white-space:nowrap;
   font-family:var(--mono);
-  font-size:10px;
-  letter-spacing:.1em;
-  color:var(--flame);
+  font-size:10.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--type);
+  padding:5px 10px;
+  background:var(--veil);
   opacity:0;
   transition:opacity .18s ease;
   pointer-events:none;
 }
-.hotspot:hover::before{transform:scale(1.25)}
-.hotspot:hover::after{opacity:1}
-.hotspot.is-active::before{
-  transform:scale(1.4);
-  box-shadow:0 0 0 7px rgba(255,132,25,.22),0 0 22px rgba(255,132,25,.48);
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .hotspot .tag{
+    backdrop-filter:blur(12px) saturate(130%);
+    -webkit-backdrop-filter:blur(12px) saturate(130%);
+  }
 }
-.hotspot.is-active::after{opacity:1}
+
+.hotspot:hover::before{transform:scale(1.18)}
+.hotspot:hover .tag{opacity:1}
+.hotspot.is-active::before{
+  transform:scale(1.3);
+  box-shadow:
+    0 0 0 3px var(--halo),
+    0 0 0 8px rgba(255,132,25,.44),
+    0 0 28px rgba(255,132,25,.6);
+}
+.hotspot.is-active .tag{opacity:1}
 .hotspot:not([data-visible]){opacity:0;pointer-events:none}
+
+/* En AR el cintillo de la página no se presenta, así que se muestran las
+   etiquetas de todos los marcadores visibles, algo más grandes, pensadas
+   para leerse a la distancia de un brazo. */
+.canvas[data-ar="on"] .hotspot[data-visible] .tag{opacity:1;font-size:12.5px}
+.canvas[data-ar="on"] .hotspot::before{width:19px;height:19px}
 
 /* ============================================================== ventanas == */
 
@@ -652,7 +729,6 @@ dialog::backdrop{
     padding-top:clamp(52px,10vh,90px);
   }
   .baton{justify-content:space-between}
-  .gloss{-webkit-line-clamp:3}
 
   .emblem{grid-template-columns:100%}
   .emblem figure{justify-self:start}
@@ -669,8 +745,11 @@ dialog::backdrop{
     padding-top:clamp(28px,6vh,50px);
     padding-bottom:12px;
   }
-  .rubric{font-size:1.05rem;margin-bottom:2px}
-  .gloss{-webkit-line-clamp:1;font-size:13px}
+  .rubric{font-size:1.05rem;margin-bottom:3px}
+  /* En horizontal el texto va completo sin ganar ancho: crece hacia abajo
+     dentro de la misma columna izquierda. */
+  .legend{max-width:46ch}
+  .gloss{font-size:12.5px;line-height:1.4}
   .masthead small{display:none}
 }
 
