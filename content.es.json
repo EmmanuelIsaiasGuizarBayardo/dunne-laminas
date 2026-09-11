@@ -3,12 +3,12 @@
   "locale": "es-MX",
   "mapping_revision": 2,
   "review": {
-    "status": "borrador para revision academica",
-    "note": "Requiere visto bueno de un revisor de neurociencias antes de usarse con publico."
+    "status": "borrador para revisión académica",
+    "note": "Requiere visto bueno de un revisor de neurociencias antes de usarse con público."
   },
   "model_interpretation": {
     "cell_type": "Motoneurona somática (motoneurona inferior, tipo alfa)",
-    "rationale": "La presencia de células de Schwann indica que el axón es periférico. El árbol dendrítico descarta una neurona sensorial del ganglio de la raíz dorsal, que es pseudounipolar y carece de dendritas; la mielinización descarta una neurona autonómica posganglionar, en su mayoria amielínica. La lectura coherente es una motoneurona con soma y dendritas en el asta ventral de la médula espinal (SNC) y axón en el nervio periférico (SNP).",
+    "rationale": "La presencia de células de Schwann indica que el axón es periférico. El árbol dendrítico descarta una neurona sensorial del ganglio de la raíz dorsal, que es pseudounipolar y carece de dendritas; la mielinización descarta una neurona autonómica posganglionar, en su mayoría amielínica. La lectura coherente es una motoneurona con soma y dendritas en el asta ventral de la médula espinal (SNC) y axón en el nervio periférico (SNP).",
     "caveat": "Decir 'neurona del SNP' sin matiz es impreciso: el soma y las dendritas de esta célula están en el SNC. Lo periférico es el axón.",
     "cns_contrast": "En el SNC la mielina la produce el oligodendrocito, que mieliniza decenas de segmentos de varios axones; en el SNP, una célula de Schwann mieliniza un solo segmento de un solo axón."
   },
@@ -31,7 +31,7 @@
       "order": 1,
       "short": "El cuerpo de la célula. Aquí se fabrica casi todo lo que la neurona necesita y aquí se suman las señales que llegan por las dendritas.",
       "long": "El soma concentra la maquinaria de síntesis: núcleo, retículo endoplasmico rugoso (los cuerpos de Nissl que se ven al microscopio), aparato de Golgi y mitocondrias. Una motoneurona debe producir proteinas no solo para si misma, sino para un axón que puede ser cientos de veces más largo que el diámetro de su propio cuerpo, y transportarlas hasta el extremo mediante transporte axonal. Los somas de las motoneuronas están entre los más grandes del sistema nervioso.\n\nSu segunda función es integradora: los potenciales postsinápticos excitatorios e inhibitorios que llegan por las dendritas se suman en el espacio y en el tiempo. Conviene precisar que la decisión de disparar no ocurre en el soma, sino en el segmento inicial del axón, la región contigua donde la densidad de canales de sodio dependientes de voltaje es mayor y donde el umbral es más bajo.",
-      "analogy": "Es la oficina central de la célula: recibe todos los reportes y ademas fabrica las piezas que el resto necesita.",
+      "analogy": "Es la oficina central de la célula: recibe todos los reportes y además fabrica las piezas que el resto necesita.",
       "misconception": "El soma no 'decide' el disparo. El umbral se alcanza en el segmento inicial del axón, una región que este modelo no representa como geometría separada.",
       "references": [
         "kandel2021"
@@ -45,8 +45,8 @@
       "label": "Núcleo",
       "order": 2,
       "short": "Contiene el ADN y dirige la produccion de las proteinas que mantienen viva a la neurona durante toda su vida.",
-      "long": "El núcleo de una neurona suele mostrar un nucléolo prominente, coherente con una demanda alta y sostenida de síntesis de proteinas. El dato relevante para el publico es otro: la mayoria de las neuronas es posmitótica, es decir, no se divide. No hay recambio celular que corrija el desgaste, así que el mantenimiento depende de este núcleo por décadas.\n\nAdemas, la expresión génica neuronal no es estática: la actividad eléctrica desencadena programas de transcripción que modifican la propia célula, y ese acoplamiento entre actividad y expresión génica es uno de los mecanismos moleculares de la plasticidad y de la memoria a largo plazo.",
-      "analogy": "El archivo maestro de planos, que ademas nunca se puede reponer porque la neurona no se copia a si misma.",
+      "long": "El núcleo de una neurona suele mostrar un nucléolo prominente, coherente con una demanda alta y sostenida de síntesis de proteinas. El dato relevante para el público es otro: la mayoría de las neuronas es posmitótica, es decir, no se divide. No hay recambio celular que corrija el desgaste, así que el mantenimiento depende de este núcleo por décadas.\n\nAdemas, la expresión génica neuronal no es estática: la actividad eléctrica desencadena programas de transcripción que modifican la propia célula, y ese acoplamiento entre actividad y expresión génica es uno de los mecanismos moleculares de la plasticidad y de la memoria a largo plazo.",
+      "analogy": "El archivo maestro de planos, que además nunca se puede reponer porque la neurona no se copia a si misma.",
       "misconception": "Tener núcleo no distingue a la neurona de otras células. Lo distintivo es que, al no dividirse, depende de este núcleo toda la vida del organismo.",
       "references": [
         "kandel2021"
@@ -61,7 +61,7 @@
       "order": 3,
       "short": "Las ramas finas que reciben señales de otras neuronas y las conducen hacia el soma.",
       "long": "El árbol dendrítico es la superficie receptiva de la neurona. En una motoneurona recibe del orden de miles de contactos sinápticos, y su geometría no es un detalle decorativo: la amplitud con la que un potencial postsináptico llega al soma depende de la distancia recorrida y del diámetro de la rama, según las propiedades de cable de la membrana. Dos sinapsis idénticas tienen efectos distintos si una es proximal y la otra distal.\n\nUna aclaración de tipo celular: las espinas dendríticas, muy conspicuas en las neuronas piramidales de la corteza, no son el rasgo dominante en las motoneuronas, donde gran parte de los contactos ocurre sobre el tallo dendrítico. Este modelo no representa espinas.",
-      "analogy": "Son las antenas de la célula, y la distancia importa: un mensaje que entra lejos llega más debil.",
+      "analogy": "Son las antenas de la célula, y la distancia importa: un mensaje que entra lejos llega más débil.",
       "misconception": "Las dendritas no son cables pasivos. Contienen canales dependientes de voltaje y pueden amplificar, filtrar o suprimir las señales que reciben.",
       "references": [
         "kandel2021"
@@ -112,7 +112,7 @@
       "label": "Axón",
       "order": 5,
       "short": "La única fibra de salida. Conduce el potencial de accion desde el soma hasta los terminales, y aquí esta mielinizada.",
-      "long": "Cada neurona tiene un solo axón, aunque se ramifique al final. En una motoneurona humana que inerva músculos del pie, el axón puede superar el metro de longitud, todo sostenido por una sola célula. La conducción es funcionalmente unidireccional, del soma hacia los terminales.\n\nEn un axón mielinizado la conducción es saltatoria: la corriente pasa por debajo de la mielina y el potencial de accion se regenera solo en los nodos de Ranvier. Según Kandel et al. (2021), las fibras mielinizadas gruesas del sistema nervioso periférico alcanzan velocidades del orden de 100 m/s, frente a aproximadamente 0.5 a 2 m/s en las fibras amielínicas más delgadas. Rasband y Peles (2021) señalan que la mielinización no solo aporta velocidad: reduce ademas el espacio y el costo metabólico necesarios para conducir rapido.",
+      "long": "Cada neurona tiene un solo axón, aunque se ramifique al final. En una motoneurona humana que inerva músculos del pie, el axón puede superar el metro de longitud, todo sostenido por una sola célula. La conducción es funcionalmente unidireccional, del soma hacia los terminales.\n\nEn un axón mielinizado la conducción es saltatoria: la corriente pasa por debajo de la mielina y el potencial de accion se regenera solo en los nodos de Ranvier. Según Kandel et al. (2021), las fibras mielinizadas gruesas del sistema nervioso periférico alcanzan velocidades del orden de 100 m/s, frente a aproximadamente 0.5 a 2 m/s en las fibras amielínicas más delgadas. Rasband y Peles (2021) señalan que la mielinización no solo aporta velocidad: reduce además el espacio y el costo metabólico necesarios para conducir rápido.",
       "analogy": "No es un cable que transmite electricidad de punta a punta; es una fila de cerillos que se van encendiendo uno al siguiente.",
       "misconception": "El potencial de accion no se debilita conforme avanza. Se regenera completo en cada nodo, así que llega al final con la misma amplitud con la que empezó.",
       "references": [
@@ -130,7 +130,7 @@
       "short": "Envoltura aislante que cubre el axón por segmentos. Cada segmento lo forma una sola célula de Schwann.",
       "long": "La mielina no es grasa inerte depositada sobre el axón: son decenas de capas concéntricas de la membrana plasmatica de la célula de Schwann, compactadas y estabilizadas por proteinas propias como P0, MBP y PMP22 (Salzer, 2015). En el sistema nervioso periférico una célula de Schwann mieliniza un único segmento de un único axón, llamado internodo; en el sistema nervioso central esa tarea la hace el oligodendrocito, que mieliniza decenas de segmentos de varios axones a la vez.\n\nLa longitud del internodo escala con el diámetro de la fibra y va de cientos de micrómetros a poco más de un milímetro. El aislamiento reduce la capacitancia de la membrana y aumenta su resistencia, lo que permite que la corriente alcance el siguiente nodo sin disiparse. La relacion es recíproca: el axón instruye a la célula de Schwann para que mielinice, y la mielina resulta necesaria para la integridad del axón a largo plazo (Stassart et al., 2018).",
       "analogy": "Como el aislante de un cable, pero hecho de células vivas envueltas muchas veces, y por tramos, no de corrido.",
-      "misconception": "Perder mielina no solo vuelve lenta la conducción. Tambien compromete la supervivencia del axón, y eso explica por que las enfermedades desmielinizantes acaban produciendo dano axonal irreversible.",
+      "misconception": "Perder mielina no solo vuelve lenta la conducción. También compromete la supervivencia del axón, y eso explica por que las enfermedades desmielinizantes acaban produciendo dano axonal irreversible.",
       "references": [
         "salzer2015",
         "stassart2018",
@@ -222,10 +222,10 @@
   "references": {
     "kandel2021": "Kandel, E. R., Koester, J. D., Mack, S. H., & Siegelbaum, S. A. (Eds.). (2021). Principles of neural science (6.ª ed.). McGraw Hill.",
     "salzer2015": "Salzer, J. L. (2015). Schwann cell myelination. Cold Spring Harbor Perspectives in Biology, 7(8), a020529. https://doi.org/10.1101/cshperspect.a020529",
-    "rasband2021": "Rasband, M. N., & Peles, E. (2021). Mechanisms of node of Ranvier assembly. Nature Reviews Neuroscience, 22(1), 7-20. https://doi.org/10.1038/s41583-020-00406-8",
-    "stassart2018": "Stassart, R. M., Mobius, W., Nave, K.-A., & Edgar, J. M. (2018). The axón-myelin unit in development and degenerative disease. Frontiers in Neuroscience, 12, 467. https://doi.org/10.3389/fnins.2018.00467",
+    "rasband2021": "Rasband, M. N., & Peles, E. (2021). Mechanisms of node of Ranvier assembly. Nature Reviews Neuroscience, 22(1), 7–20. https://doi.org/10.1038/s41583-020-00406-8",
+    "stassart2018": "Stassart, R. M., Möbius, W., Nave, K.-A., & Edgar, J. M. (2018). The axon-myelin unit in development and degenerative disease. Frontiers in Neuroscience, 12, 467. https://doi.org/10.3389/fnins.2018.00467",
     "jessen2015": "Jessen, K. R., Mirsky, R., & Lloyd, A. C. (2015). Schwann cells: Development and role in nerve repair. Cold Spring Harbor Perspectives in Biology, 7(7), a020487. https://doi.org/10.1101/cshperspect.a020487",
-    "salzer2016": "Salzer, J. L., & Zalc, B. (2016). Myelination. Current Biology, 26(20), R971-R975. https://doi.org/10.1016/j.cub.2016.07.074"
+    "salzer2016": "Salzer, J. L., & Zalc, B. (2016). Myelination. Current Biology, 26(20), R971–R975. https://doi.org/10.1016/j.cub.2016.07.074"
   },
   "citation_style": "APA 7"
 }

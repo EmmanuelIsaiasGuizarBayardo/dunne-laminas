@@ -126,6 +126,32 @@ a{color:inherit;text-decoration:none}
 .act-flame:hover{color:var(--type)}
 .act-bare{background-image:none}
 
+/* Modo staff. Los bloques dirigidos a quien imparte el taller no se muestran
+   al público; se revelan con un gesto en el logo o con ?staff=1 en la URL. */
+.staff-only{display:none}
+body[data-staff="on"] .staff-only{display:block}
+
+.staff-flag{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+.staff-flag[hidden]{display:none}
+
+.staff-tag{
+  display:block;
+  margin:0 0 6px;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+
+.sigil{cursor:default;-webkit-user-select:none;user-select:none}
+
 /* Botón de AR. Ya no se entrega por slot a model-viewer: es un elemento de
    la página que llama a activateAR(), porque el slot lo posiciona el propio
    componente y no hay forma confiable de centrarlo desde fuera. Aquí el
@@ -217,8 +243,11 @@ a{color:inherit;text-decoration:none}
 .cover{
   position:absolute;
   left:var(--gutter);
-  top:50%;
-  transform:translateY(-50%);
+  top:clamp(84px,11vh,132px);
+  bottom:clamp(92px,15vh,180px);
+  display:grid;
+  align-content:center;
+  justify-items:start;
   z-index:4;
   max-width:min(16em,68vw);
   transition:opacity .5s ease,transform .5s ease,visibility .5s;
@@ -226,7 +255,7 @@ a{color:inherit;text-decoration:none}
 .stage[data-mode="explore"] .cover{
   opacity:0;
   visibility:hidden;
-  transform:translateY(-54%);
+  transform:translateY(-14px);
   pointer-events:none;
 }
 
@@ -720,6 +749,7 @@ dialog::backdrop{
     right:var(--gutter);
   }
   .stage[data-mode="explore"] .cover{transform:translateY(12px)}
+  .cover{align-content:end}
   .cover::before{
     inset:-8vh calc(-1 * var(--gutter));
     background:linear-gradient(to top,var(--veil) 0%,var(--veil-soft) 70%,var(--veil-none) 100%);
@@ -744,7 +774,7 @@ dialog::backdrop{
 /* Horizontal en teléfono: muy poca altura, así que el cintillo se reduce a
    una sola línea y el resto se consulta en la ventana. */
 @media (max-height:520px) and (orientation:landscape){
-  .cover{top:auto;bottom:auto;transform:none;max-width:min(14em,52vw)}
+  .cover{top:clamp(58px,13vh,86px);bottom:auto;transform:none;max-width:min(14em,52vw)}
   .monument{font-size:clamp(1.9rem,6vw,3rem)}
   .dek{display:none}
   .caption{

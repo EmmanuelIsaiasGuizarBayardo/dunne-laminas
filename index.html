@@ -83,14 +83,15 @@
   </button>
 
   <header class="masthead">
-    <a class="sigil" href="./index.html">
+    <div class="sigil" id="sigil">
       <img src="./assets/Dunne_oscuros.png" alt="Logo de DUNNE" width="28" height="28">
       <span>
         <b>DUNNE</b>
         <small>División Universitaria de Neuroingeniería · UNAM</small>
       </span>
-    </a>
+    </div>
     <div class="helm">
+      <p class="staff-flag" id="staffFlag" hidden>staff</p>
       <button type="button" class="act act-bare" id="fullscreen" hidden>Pantalla completa</button>
       <button type="button" class="act act-bare" id="openWays">Cómo usarla</button>
       <button type="button" class="act act-bare" id="openProbe">Diagnóstico</button>
@@ -133,11 +134,15 @@
     <p class="lede" id="moreShort"></p>
     <h3>Más a fondo</h3>
     <div id="moreDeep"></div>
-    <h3>Cómo explicarlo en el taller</h3>
-    <p id="moreAnalogy"></p>
-    <h3>Error frecuente</h3>
-    <p id="moreMyth"></p>
-    <p class="caveat" id="moreCaveat" hidden></p>
+
+    <div class="staff-only">
+      <h3>Cómo explicarlo en el taller</h3>
+      <p><span class="staff-tag">para quien presenta</span><span id="moreAnalogy"></span></p>
+      <h3>Error frecuente por desactivar</h3>
+      <p><span class="staff-tag">para quien presenta</span><span id="moreMyth"></span></p>
+      <p class="caveat" id="moreCaveat" hidden></p>
+    </div>
+
     <p class="sources" id="moreSources"></p>
   </div>
 </dialog>
@@ -149,37 +154,29 @@
       <p class="kicker">Cómo usarla</p>
       <button type="button" class="act act-bare" data-close>Cerrar</button>
     </div>
-    <h2 id="waysTitle">Tres caminos, de menos a más fricción</h2>
+    <h2 id="waysTitle">Tres formas de verla</h2>
 
     <ol class="ladder">
       <li>
-        <h3>Aquí mismo, en el navegador</h3>
+        <h3>En esta pantalla</h3>
         <p>
-          Ya está funcionando detrás de esta ventana, en cualquier teléfono,
-          tablet o computadora. Es la vía recomendada para talleres con muchos
-          asistentes: cero instalación, cero permisos.
+          Gírala con un dedo. Acércala con dos. Toca los puntos naranjas para
+          leer qué es cada estructura.
         </p>
       </li>
       <li>
-        <h3>En realidad aumentada, sin app</h3>
+        <h3>En tu espacio</h3>
         <p>
-          <b>Verla en tu espacio</b> coloca la neurona en el piso o la mesa, a
-          un metro de largo. Requiere que la página se sirva por HTTPS.
-        </p>
-        <p class="aside-note">
-          Las etiquetas de cada estructura solo aparecen si la AR corre por
-          <b>WebXR</b>, dentro del navegador. Cuando Android delega en Scene
-          Viewer, o iOS en AR Quick Look, esas apps reciben únicamente el
-          archivo del modelo y no hay forma de mostrarles texto: la AR sirve
-          entonces para percibir la escala, y la lectura se hace en la página.
+          Toca <b>Verla en tu espacio</b> y apunta la cámara al piso. La
+          neurona aparece de un metro de largo y puedes caminar a su
+          alrededor.
         </p>
       </li>
       <li>
-        <h3>Con la app y el marcador impreso</h3>
+        <h3>Con la app y el marcador</h3>
         <p>
-          La app de Android añade el reconocimiento del marcador y los módulos
-          interactivos hechos en Unity. Requiere permitir la instalación de
-          apps de origen desconocido, así que conviene reservarla para el aula.
+          Para el aula: reconoce un marcador impreso y añade los módulos
+          interactivos. Solo para Android, y hay que autorizar la instalación.
         </p>
         <p class="deeds">
           <!-- Enlace al asset publicado de la v1.0. Cuando el nombre del asset
@@ -189,24 +186,29 @@
           <a class="act act-flame" href="https://github.com/Mau897/Mau897.github.io/releases/download/v1.0/NeuronaAR5.apk">Descargar APK</a>
           <a class="act" href="./instrucciones.html">Manual completo</a>
         </p>
-        <p class="aside-note">
-          Verifica el archivo antes de instalarlo: <code>shasum -a 256 NeuronaAR5.apk</code>
-          debe coincidir con la suma publicada en el release.
+        <p class="aside-note staff-only">
+          <span class="staff-tag">para quien presenta</span>
+          Verifica el archivo antes de instalarlo con <code>shasum -a 256</code>
+          contra la suma publicada en el release. En AR, las etiquetas de cada
+          estructura solo aparecen cuando la sesión corre por WebXR; si el
+          sistema delega en Scene Viewer o en Quick Look, la AR sirve para
+          percibir la escala y la lectura se hace en la página.
         </p>
       </li>
     </ol>
 
     <div class="emblem">
       <div>
-        <h3>El código de esta página</h3>
+        <h3>Compártela</h3>
         <p>
-          Abre <code>mau897.github.io</code>. Sirve para un taller: se proyecta
-          o se imprime y cada asistente entra desde su propio dispositivo.
+          Este código abre esta misma página. Proyéctalo o imprímelo y cada
+          persona entra desde su propio dispositivo.
         </p>
-        <p class="aside-note">
+        <p class="aside-note staff-only">
+          <span class="staff-tag">para quien presenta</span>
           No es el marcador de la app. Un marcador de realidad aumentada
-          necesita detalle visual no repetitivo, y un QR es lo contrario, así
-          que el marcador se está rediseñando aparte.
+          necesita detalle visual no repetitivo y un QR es lo contrario, así
+          que el marcador se diseña aparte.
         </p>
       </div>
       <figure>
@@ -387,9 +389,9 @@ async function load() {
     dot.dataset.normal = anchor.normal.join(" ");
     dot.dataset.visibilityAttribute = "visible";
 
-    // La etiqueta va DENTRO del marcador a propósito: en AR por WebXR solo
-    // se presenta el DOM que desciende de <model-viewer>, así que el
-    // cintillo de la página desaparece y esto es lo único que queda.
+    // La etiqueta debe ser hija del marcador: en AR por WebXR solo se
+    // presenta el DOM que desciende de <model-viewer>, de modo que el
+    // cintillo de la página no está disponible durante la sesión.
     const label = document.createElement("span");
     label.className = "tag";
     label.textContent = `${String(i + 1).padStart(2, "0")} · ${structure ? structure.label : cls}`;
@@ -456,6 +458,34 @@ function open(dialog) {
   if (typeof dialog.showModal === "function") dialog.showModal();
   else dialog.setAttribute("open", "");   // respaldo sin <dialog> modal
 }
+
+/* ------------------------------------------------------------ modo staff -- */
+
+/* Los bloques dirigidos a quien imparte el taller no se muestran al público.
+   Se revelan con cinco toques rápidos en el logo, que nadie descubre por
+   accidente, o con ?staff=1 para dejarlo fijo en un dispositivo de la mesa. */
+const STAFF_TAPS = 5;
+const STAFF_WINDOW_MS = 2500;
+
+let staff = new URLSearchParams(location.search).has("staff");
+let taps = [];
+
+function setStaff(on) {
+  staff = on;
+  document.body.dataset.staff = on ? "on" : "off";
+  $("staffFlag").hidden = !on;
+}
+
+$("sigil").addEventListener("click", () => {
+  const now = Date.now();
+  taps = [...taps, now].filter(t => now - t < STAFF_WINDOW_MS);
+  if (taps.length >= STAFF_TAPS) {
+    taps = [];
+    setStaff(!staff);
+  }
+});
+
+setStaff(staff);
 
 $("openMore").addEventListener("click", () => { fillMore(); open($("more")); });
 $("openWays").addEventListener("click", () => open($("ways")));
