@@ -3,10 +3,13 @@
 Material didáctico interactivo de la División Universitaria de Neuroingeniería
 (DUNNE), Facultad de Medicina, UNAM.
 
+Sitio publicado: <https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/>
+Repositorio: `EmmanuelIsaiasGuizarBayardo/dunne-neurona`
+
 El repositorio contiene dos aplicaciones que comparten el mismo modelo 3D y el
 mismo contenido didáctico:
 
-| | **Lámina** | **Sala** |
+| | **Neurona** | **Sala** |
 |---|---|---|
 | Qué es | Visor 3D y realidad aumentada de una motoneurona | Red de neuronas distribuida entre varios dispositivos |
 | Despliegue | Sitio estático en GitHub Pages | Servidor local en una laptop |
@@ -18,12 +21,12 @@ mismo contenido didáctico:
 
 ## 1. Arquitectura
 
-### 1.1 Lámina (sitio estático)
+### 1.1 Neurona (sitio estático)
 
 ```
 index.html            visor, cédulas de contenido y ventanas modales
 instrucciones.html    manual de instalación y uso
-style.css             hoja única de la lámina
+style.css             hoja única del visor
 content.es.json       contenido didáctico con referencias en APA 7
 hotspots.json         anclajes 3D de cada estructura sobre el modelo
 manifest.webmanifest  instalable; abre sin barra de direcciones
@@ -39,8 +42,8 @@ No hay compilación ni dependencias de instalación: es HTML, CSS y un módulo d
 JavaScript. `<model-viewer>` se carga desde un CDN con versión fija.
 
 La configuración específica del modelo vive en un bloque
-`<script type="application/json" id="lamina">` al inicio de `index.html`. Para
-publicar otra lámina se duplica la página y se cambian esas rutas; el resto del
+`<script type="application/json" id="exhibit">` al inicio de `index.html`. Para
+publicar otro modelo se duplica la página y se cambian esas rutas; el resto del
 código no contiene nada específico de la neurona.
 
 ### 1.2 Sala (servidor local)
@@ -68,7 +71,7 @@ Python. No requiere `pip install`.
 
 ### 1.3 Decisión de transporte
 
-La lámina se sirve por HTTPS porque la realidad aumentada lo exige: WebXR solo
+El visor se sirve por HTTPS porque la realidad aumentada lo exige: WebXR solo
 existe en contexto seguro y Scene Viewer, la aplicación del sistema a la que
 Android delega la AR, únicamente acepta URLs HTTPS.
 
@@ -86,7 +89,7 @@ servidor HTTP local.** Hay que publicar en GitHub Pages o usar un túnel HTTPS
 
 ## 2. Puesta en marcha
 
-### 2.1 Lámina
+### 2.1 Neurona
 
 Cualquier servidor estático. `fetch` de los archivos JSON y del modelo falla
 sobre `file://`, por lo que abrir el HTML con doble clic no funciona.
@@ -224,7 +227,7 @@ modelo original no se modifica en ningún paso.
 python clean_glb.py --input Neurona.glb --mapping mapping.json \
     --output Neurona_v2.glb --report reporte_limpieza.json
 
-# 2. Paleta didáctica por clase (lámina)
+# 2. Paleta didáctica por clase (neurona)
 python bake_palette.py --input Neurona_v2.glb --output assets/Neurona_v3.glb
 
 # 3. Paleta con un material por malla (sala; permite animar cada vaina)
@@ -316,7 +319,7 @@ ciclos de vida distintos y no deben acoplarse.
 | archivo | contenido |
 |---|---|
 | `docs/operacion.md` | guía de sala: red, firewall, laptop dedicada, lista de verificación |
-| `PUBLICAR.md` | publicación de la lámina y migración de dominio |
+| `docs/PUBLICAR.md` | publicación del sitio y migración de dominio |
 | `instrucciones.html` | manual de uso para el público |
 | `Revision_academica_Neurona_AR.docx` | contenido para revisión por especialista |
 
@@ -337,7 +340,7 @@ ciclos de vida distintos y no deben acoplarse.
 ## Créditos
 
 Modelo 3D y aplicación en Unity: Mauricio Mendiola Rivera.
-Limpieza del modelo, contenido didáctico, lámina web y sala interactiva:
+Limpieza del modelo, contenido didáctico, neurona web y sala interactiva:
 División Universitaria de Neuroingeniería, UNAM.
 
 El modelo representa una motoneurona somática: soma y dendritas en la médula

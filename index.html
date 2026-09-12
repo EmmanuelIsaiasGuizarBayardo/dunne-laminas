@@ -7,7 +7,7 @@
 <meta name="description" content="Explora una motoneurona en 3D y en realidad aumentada. Toca cada estructura para aprender sobre soma, dendritas, axón, mielina y sinapsis. División Universitaria de Neuroingeniería, UNAM.">
 <meta name="theme-color" content="#0b1218">
 
-<link rel="canonical" href="https://mau897.github.io/">
+<link rel="canonical" href="https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/">
 <link rel="icon" href="./assets/Dunne_oscuros.png">
 <link rel="apple-touch-icon" href="./assets/icon-192.png">
 
@@ -23,23 +23,23 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Neurona AR · DUNNE">
 <meta property="og:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
-<meta property="og:url" content="https://mau897.github.io/">
-<meta property="og:image" content="https://mau897.github.io/assets/poster.webp">
+<meta property="og:url" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/">
+<meta property="og:image" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/assets/poster.webp">
 <meta property="og:locale" content="es_MX">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Neurona AR · DUNNE">
 <meta name="twitter:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
-<meta name="twitter:image" content="https://mau897.github.io/assets/poster.webp">
+<meta name="twitter:image" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/assets/poster.webp">
 
-<link rel="stylesheet" href="./style.css?v=1.4">
+<link rel="stylesheet" href="./style.css?v=1.5">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
-<!-- Configuración de la lámina. Para publicar otro modelo se duplica este
-     bloque en una página nueva y se cambian las rutas: el resto del código
-     no conoce nada específico de la neurona. -->
-<script type="application/json" id="lamina">
+<!-- Configuración del modelo expuesto. Para publicar otro se duplica esta
+     página y se cambian estas rutas: el resto del código no contiene nada
+     específico de la neurona. -->
+<script type="application/json" id="exhibit">
 {
-  "kicker": "Lámina 01 · Motoneurona somática",
+  "kicker": "Motoneurona somática",
   "title": "La célula<br>que <em>ordena</em><br>moverte",
   "dek": "Gírala con el dedo y toca los puntos para leer qué es cada estructura.",
   "model": {
@@ -102,7 +102,7 @@
     <p class="kicker" id="kicker"></p>
     <h1 class="monument" id="title"></h1>
     <p class="dek" id="dek"></p>
-    <button type="button" class="act act-flame" id="enter">Explorar la lámina</button>
+    <button type="button" class="act act-flame" id="enter">Explorar la neurona</button>
   </div>
 
   <div class="caption" aria-live="polite">
@@ -212,8 +212,8 @@
         </p>
       </div>
       <figure>
-        <img src="./assets/qr_dunne.jpg" width="170" height="170"
-             alt="Código QR que enlaza a mau897.github.io, la página de Neurona AR de DUNNE.">
+        <img src="./assets/qr_dunne.png" width="170" height="170"
+             alt="Código QR que enlaza a esta misma página de Neurona AR de DUNNE.">
         <figcaption class="meta">Escanéalo o compártelo</figcaption>
       </figure>
     </div>
@@ -303,23 +303,23 @@
    síntomas. Súbelo cada vez que cambies index.html o style.css. */
 const BUILD = "1.3 · 9 sep 2026";
 
-const lamina = JSON.parse(document.getElementById("lamina").textContent);
+const exhibit = JSON.parse(document.getElementById("exhibit").textContent);
 
 const $ = id => document.getElementById(id);
 const stage = $("stage");
 const viewer = $("viewer");
 const fault = $("fault");
 
-/* ------------------------------------------------------------ la lámina -- */
+/* ------------------------------------------------------------ el modelo -- */
 
-$("kicker").textContent = lamina.kicker;
-$("title").innerHTML = lamina.title;
-$("dek").textContent = lamina.dek;
+$("kicker").textContent = exhibit.kicker;
+$("title").innerHTML = exhibit.title;
+$("dek").textContent = exhibit.dek;
 
-viewer.setAttribute("alt", lamina.model.alt);
-viewer.setAttribute("poster", lamina.model.poster);
-viewer.setAttribute("ios-src", lamina.model.usdz);
-viewer.setAttribute("src", lamina.model.glb);
+viewer.setAttribute("alt", exhibit.model.alt);
+viewer.setAttribute("poster", exhibit.model.poster);
+viewer.setAttribute("ios-src", exhibit.model.usdz);
+viewer.setAttribute("src", exhibit.model.glb);
 
 /* -------------------------------------------------- portada que se retira -- */
 
@@ -368,8 +368,8 @@ async function fetchJson(path) {
 
 async function load() {
   const [content, anchors] = await Promise.all([
-    fetchJson(lamina.content),
-    fetchJson(lamina.hotspots),
+    fetchJson(exhibit.content),
+    fetchJson(exhibit.hotspots),
   ]);
 
   references = content.references ?? {};
@@ -437,7 +437,7 @@ function fillMore() {
   const s = structures.get(tour[current]);
   if (!s) return;
   $("moreFolio").textContent =
-    `${String(current + 1).padStart(2, "0")} · ${lamina.kicker}`;
+    `${String(current + 1).padStart(2, "0")} · ${exhibit.kicker}`;
   $("moreTitle").textContent = s.label;
   $("moreShort").textContent = s.short;
   $("moreDeep").innerHTML = s.long.split("\n\n").map(p => `<p>${p}</p>`).join("");
@@ -681,7 +681,7 @@ if (fsSupported) {
   document.addEventListener("fullscreenchange", syncFsLabel);
   syncFsLabel();
 
-  // "Explorar la lámina" ya es un gesto del usuario, que es lo que la API
+  // "Explorar la neurona" ya es un gesto del usuario, que es lo que la API
   // exige, y su intención es justamente ver el modelo sin estorbos.
   $("enter").addEventListener("click", () => {
     if (!document.fullscreenElement) toggleFullscreen();

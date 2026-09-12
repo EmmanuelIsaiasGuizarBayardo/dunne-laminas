@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Genera el QR de enlace de una lámina de DUNNE.
+"""Genera el código QR de enlace de un sitio de DUNNE.
 
-Este código sirve para compartir la página en un taller, no como marcador de
+El código sirve para compartir la página en un taller, no como marcador de
 realidad aumentada: un QR es un mal Image Target porque su patrón es
-repetitivo y auto-similar, justo lo contrario de lo que necesita el
-reconocimiento por características.
+repetitivo y auto-similar, lo contrario de lo que requiere el reconocimiento
+por características.
 
 Se usa corrección de errores alta (nivel H, ~30% de redundancia) porque el
 código se va a imprimir y proyectar, y en esas condiciones pierde contraste y
@@ -56,7 +56,7 @@ def build(url: str, output: Path, scale: int = 12, quiet_zone: int = 4) -> dict:
 
 def main() -> int:
     """Punto de entrada de línea de comandos."""
-    ap = argparse.ArgumentParser(description="Genera el QR de enlace de la lámina.")
+    ap = argparse.ArgumentParser(description="Genera el código QR de enlace del sitio.")
     ap.add_argument("--url", required=True)
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--scale", type=int, default=12)

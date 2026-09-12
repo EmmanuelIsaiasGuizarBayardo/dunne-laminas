@@ -1,6 +1,10 @@
+> **Estado:** el repositorio ya existe y el sitio está publicado en
+> <https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/>. Esta guía queda como referencia para republicar, migrar de
+> dominio o crear el sitio de un modelo nuevo.
+
 # Publicar Neurona AR en un repositorio propio
 
-Guía para llevar la lámina a un repositorio nuevo bajo
+Guía para llevar la neurona a un repositorio nuevo bajo
 `github.com/EmmanuelIsaiasGuizarBayardo` y dejar la realidad aumentada
 funcionando.
 
@@ -24,10 +28,10 @@ Conviene decidirlo una sola vez.
 cuenta, y ese dominio es el mejor lugar para tu página personal con tu CV, tu
 tesis y tus publicaciones. **Recomiendo no gastarlo en este proyecto.**
 
-**b) Repositorio de proyecto.** Por ejemplo `dunne-laminas`, publicado en
-`https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/`. Es la opción
+**b) Repositorio de proyecto.** Por ejemplo `dunne-neurona`, publicado en
+`https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/`. Es la opción
 inmediata y la que sugiero para hoy. El nombre en plural deja lugar a las
-láminas que vengan después: la página ya está parametrizada por un bloque de
+modelos que vengan después: la página ya está parametrizada por un bloque de
 configuración, así que agregar un modelo nuevo es duplicar una carpeta.
 
 **c) Organización de DUNNE.** Una organización de GitHub, por ejemplo
@@ -48,15 +52,15 @@ errores nivel H:
 |---|---|---|
 | `https://dunne.unam.mx` (dominio propio) | 21 | 29² |
 | `https://dunne-unam.github.io/neurona/` | 37 | 37² |
-| `https://emmanuelisaiasguizarbayardo.github.io/neurona-ar/` | 57 | 41² |
-| `https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/` | 60 | 45² |
+| `https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/` | 57 | 41² |
+| `https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/` | 60 | 45² |
 
 De 29² a 45² son módulos casi la mitad de grandes al mismo tamaño impreso.
 Para un taller en Universum, donde el código se escanea de lejos y con luz
 irregular, eso se nota. No es razón para bloquear la publicación de hoy, pero
 sí para que la organización con nombre corto entre al plan.
 
-**Mi recomendación:** crea hoy `dunne-laminas` bajo tu cuenta y publica; y por
+**Mi recomendación:** crea hoy `dunne-neurona` bajo tu cuenta y publica; y por
 separado, sin prisa, la organización `DUNNE-UNAM` como hogar definitivo. El
 día que migres, el único cambio real es la URL en cuatro lugares y regenerar
 el QR.
@@ -65,7 +69,7 @@ el QR.
 
 ## 2. Crear el repositorio y publicar
 
-En GitHub: **New repository**, nombre `dunne-laminas`, visibilidad pública,
+En GitHub: **New repository**, nombre `dunne-neurona`, visibilidad pública,
 sin README ni `.gitignore` iniciales para que el primer push no choque.
 
 Los archivos van en la raíz, con esta estructura:
@@ -91,7 +95,7 @@ git init
 git branch -M main
 git add .
 git commit -m "Lamina 01: motoneurona en 3D y AR, con contenido didactico"
-git remote add origin https://github.com/EmmanuelIsaiasGuizarBayardo/dunne-laminas.git
+git remote add origin https://github.com/EmmanuelIsaiasGuizarBayardo/dunne-neurona.git
 git push -u origin main
 ```
 
@@ -109,7 +113,7 @@ que cambiar esas cuatro. En PowerShell:
 
 ```powershell
 $viejo = "https://mau897.github.io/"
-$nuevo = "https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/"
+$nuevo = "https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/"
 (Get-Content index.html -Raw).Replace($viejo, $nuevo) | Set-Content index.html -NoNewline
 ```
 
@@ -134,7 +138,7 @@ equivocado. Con el script incluido:
 
 ```bash
 pip install segno
-python make_qr.py --url "https://emmanuelisaiasguizarbayardo.github.io/dunne-laminas/" --output assets/qr_dunne.png
+python make_qr.py --url "https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/" --output assets/qr_dunne.png
 ```
 
 Usa corrección de errores nivel H, cerca de 30% de redundancia, porque el
@@ -181,7 +185,7 @@ HTTPS con certificado válido.
 Cada paso descarta al anterior, así que conviene no saltárselos.
 
 1. **Que los archivos existan.** Abre en el teléfono
-   `…/dunne-laminas/assets/Neurona_v3.glb`. Debe descargar unos 2.3 MB. Si da
+   `…/dunne-neurona/assets/Neurona_v3.glb`. Debe descargar unos 2.3 MB. Si da
    404, el push no incluyó `assets/`.
 2. **Que el visor cargue.** Entra a la página: primero aparece el póster y
    después el modelo girable.
