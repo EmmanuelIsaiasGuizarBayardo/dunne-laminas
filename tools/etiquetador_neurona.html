@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Etiquetador anatómico · Neurona DUNNE</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+:root{
+  --ink:#0a0d12;
+  --panel:#12171f;
+  --panel-2:#0e131a;
+  --rule:#232c39;
+  --text:#e6edf6;
+  --dim:#8b9bb0;
+  --blue:#1e88ff;
+  --amber:#ff7a00;
+  --alert:#ff4d6d;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box}
+
+html,body{height:100%;margin:0}
+
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.45;
+  display:grid;
+  grid-template-columns:1fr 392px;
+  grid-template-rows:100%;
+  overflow:hidden;
+}
+
+/* ---------- VIEWPORT ---------- */
+
+#stage{
+  position:relative;
+  min-width:0;
+  overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #101722 0%, var(--ink) 70%);
+}
+
+#stage canvas{
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.stage-hud{
+  position:absolute;
+  left:16px; top:14px;
+  font-family:var(--mono);
+  font-size:11.5px;
+  color:var(--dim);
+  pointer-events:none;
+  letter-spacing:.02em;
+}
+
+.stage-hud b{color:var(--text);font-weight:600}
+
+.stage-foot{
+  position:absolute;
+  left:16px; bottom:14px; right:16px;
+  display:flex;
+  gap:18px;
+  align-items:flex-end;
+  justify-content:space-between;
+  font-family:var(--mono);
+  font-size:11.5px;
+  color:var(--dim);
+  pointer-events:none;
+}
+
+.keys{display:flex;flex-wrap:wrap;gap:4px 14px;max-width:60ch;pointer-events:none}
+.keys span{white-space:nowrap}
+.keys kbd{
+  font-family:var(--mono);
+  font-size:10.5px;
+  border:1px solid var(--rule);
+  border-bottom-width:2px;
+  border-radius:3px;
+  padding:1px 5px;
+  color:var(--text);
+  background:#161d27;
+}
+
+/* zona de carga */
+#drop{
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  background:rgba(10,13,18,.92);
+  z-index:20;
+}
+#drop.hide{display:none}
+
+.drop-inner{
+  text-align:center;
+  max-width:46ch;
+  padding:32px;
+  border:1px dashed var(--rule);
+}
+.drop-inner h1{
+  font-size:19px;
+  font-weight:600;
+  margin:0 0 8px;
+  letter-spacing:-.01em;
+}
+.drop-inner p{color:var(--dim);margin:0 0 18px}
+.drop-inner code{font-family:var(--mono);color:var(--text)}
+body.dragging .drop-inner{border-color:var(--blue);border-style:solid}
+
+.file-btn{
+  font:inherit;
+  font-weight:600;
+  color:var(--ink);
+  background:var(--blue);
+  border:0;
+  padding:9px 16px;
+  cursor:pointer;
+}
+.file-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* ---------- PANEL ---------- */
+
+#side{
+  background:var(--panel);
+  border-left:1px solid var(--rule);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+
+.side-head{
+  padding:16px 18px 13px;
+  border-bottom:1px solid var(--rule);
+}
+.side-head h2{
+  margin:0;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+.side-head p{
+  margin:4px 0 0;
+  color:var(--dim);
+  font-size:12.5px;
+}
+
+/* progreso: una regla fina que se llena, no una barra decorativa */
+.progress{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--mono);
+  font-size:11.5px;
+  color:var(--dim);
+}
+.progress-track{
+  flex:1;
+  height:2px;
+  background:var(--rule);
+  position:relative;
+}
+.progress-fill{
+  position:absolute; left:0; top:0; bottom:0;
+  width:0%;
+  background:var(--blue);
+}
+
+/* leyenda = paleta de asignación */
+.legend{
+  padding:12px 18px 14px;
+  border-bottom:1px solid var(--rule);
+  max-height:31vh;
+  overflow:auto;
+}
+.legend-row{
+  width:100%;
+  display:grid;
+  grid-template-columns:16px 1fr auto auto;
+  align-items:center;
+  gap:9px;
+  padding:5px 6px 5px 4px;
+  background:none;
+  border:0;
+  border-left:2px solid transparent;
+  color:var(--text);
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.legend-row:hover{background:var(--panel-2)}
+.legend-row[aria-pressed="true"]{border-left-color:var(--text);background:var(--panel-2)}
+.legend-row:focus-visible{outline:1px solid var(--blue);outline-offset:-1px}
+.swatch{width:12px;height:12px;margin-left:2px}
+.legend-name{font-size:12.5px}
+.legend-count{font-family:var(--mono);font-size:11px;color:var(--dim);min-width:2ch;text-align:right}
+.legend-key{
+  font-family:var(--mono);font-size:10px;color:var(--dim);
+  border:1px solid var(--rule);padding:0 4px;min-width:16px;text-align:center;
+}
+
+/* censo de mallas */
+.roster{flex:1;overflow:auto;min-height:0}
+
+.group-head{
+  position:sticky; top:0;
+  background:var(--panel);
+  padding:9px 18px 5px;
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;
+  color:var(--dim);
+}
+.group-head .swatch{width:8px;height:8px;margin:0}
+.group-head b{color:var(--text);font-weight:600;font-size:12.5px}
+
+.mesh-row{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  align-items:center;
+  gap:8px;
+  padding:6px 18px;
+  cursor:pointer;
+  border-left:2px solid transparent;
+}
+.mesh-row:hover{background:var(--panel-2)}
+.mesh-row.sel{background:#182231;border-left-color:var(--blue)}
+.mesh-row .slug{font-family:var(--mono);font-size:11.5px;letter-spacing:-.01em}
+.mesh-row .node{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.mesh-row .tris{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.state{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--amber);
+  flex:none;
+}
+.state.ok{background:var(--blue)}
+.mesh-row .warn{color:var(--alert);font-family:var(--mono);font-size:10.5px}
+
+/* detalle de selección */
+.detail{
+  border-top:1px solid var(--rule);
+  padding:12px 18px;
+  background:var(--panel-2);
+  font-family:var(--mono);
+  font-size:11.5px;
+  color:var(--dim);
+  display:grid;
+  gap:3px;
+}
+.detail .k{color:var(--text)}
+.detail em{color:var(--amber);font-style:normal}
+
+/* acciones */
+.actions{
+  border-top:1px solid var(--rule);
+  padding:12px 18px 16px;
+  display:grid;
+  gap:8px;
+}
+.actions .row{display:flex;gap:8px}
+button.act{
+  font:inherit;font-size:12.5px;
+  padding:8px 12px;
+  background:#171e29;
+  color:var(--text);
+  border:1px solid var(--rule);
+  cursor:pointer;
+  flex:1;
+}
+button.act:hover{border-color:var(--dim)}
+button.act:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+button.act.primary{background:var(--blue);border-color:var(--blue);color:#04121f;font-weight:600}
+button.act.primary:hover{background:#3b9bff}
+button.act[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+
+.hint{color:var(--dim);font-size:11.5px;margin:0}
+
+@media (max-width:940px){
+  body{grid-template-columns:100%;grid-template-rows:52vh 1fr;overflow:auto}
+  #side{border-left:0;border-top:1px solid var(--rule)}
+  .legend{max-height:none}
+  .stage-foot .keys{display:none}
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .legend-row,.mesh-row,button.act{transition:background .09s linear,border-color .09s linear}
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div class="stage-hud">
+    Neurona.glb · <b id="hudMeshes">—</b> mallas · <b id="hudTris">—</b> triángulos
+  </div>
+
+  <div class="stage-foot">
+    <div class="keys">
+      <span><kbd>clic</kbd> seleccionar</span>
+      <span><kbd>1</kbd>–<kbd>0</kbd> asignar clase</span>
+      <span><kbd>Enter</kbd> confirmar</span>
+      <span><kbd>F</kbd> encuadrar</span>
+      <span><kbd>I</kbd> aislar clase</span>
+      <span><kbd>→</kbd> siguiente sin confirmar</span>
+    </div>
+    <div id="hudSel">sin selección</div>
+  </div>
+
+  <div id="drop">
+    <div class="drop-inner">
+      <h1>Carga el modelo para empezar</h1>
+      <p>Arrastra <code>Neurona.glb</code> a esta ventana, o ábrelo desde tu equipo. El archivo no sale de tu navegador.</p>
+      <input type="file" id="fileInput" accept=".glb,.gltf" hidden>
+      <button class="file-btn" id="fileBtn">Abrir Neurona.glb</button>
+    </div>
+  </div>
+</div>
+
+<aside id="side">
+  <div class="side-head">
+    <h2>Etiquetador anatómico</h2>
+    <p>Valida o corrige la clase de cada malla. Las propuestas vienen de un análisis geométrico y ninguna está confirmada todavía.</p>
+    <div class="progress">
+      <span id="progText">0 / 0 confirmadas</span>
+      <span class="progress-track"><span class="progress-fill" id="progFill"></span></span>
+    </div>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="roster" id="roster"></div>
+
+  <div class="detail" id="detail">
+    <div>Selecciona una malla en el visor o en la lista.</div>
+  </div>
+
+  <div class="actions">
+    <div class="row">
+      <button class="act" id="btnConfirmClass">Confirmar clase completa</button>
+      <button class="act" id="btnIsolate" aria-pressed="false">Aislar clase</button>
+    </div>
+    <div class="row">
+      <button class="act" id="btnOriginal" aria-pressed="false">Colores originales</button>
+      <button class="act" id="btnReset">Restaurar propuestas</button>
+    </div>
+    <div class="row">
+      <input type="file" id="mapInput" accept=".json" hidden>
+      <button class="act" id="btnImport">Cargar mapping.json</button>
+    </div>
+    <div class="row">
+      <button class="act primary" id="btnExport">Descargar mapping.json</button>
+      <button class="act" id="btnContent">Plantilla de contenido</button>
+    </div>
+    <p class="hint" id="exportHint"></p>
+  </div>
+</aside>
+
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+/* ============================================================
+   Taxonomía anatómica. El orden define la tecla de acceso
+   (1..9, 0) y el orden de los grupos en el censo.
+   ============================================================ */
+
+const CLASSES = [
+  { id:"soma",             label:"Soma",                        color:"#ff7a00", singleton:true },
+  { id:"nucleus",          label:"Núcleo",                      color:"#ffc46b", singleton:true },
+  { id:"dendrite",         label:"Dendrita",                    color:"#1e88ff" },
+  { id:"dendrite_primary", label:"Dendrita primaria",           color:"#63b0ff" },
+  { id:"axon",             label:"Axón",                        color:"#00d3a7", singleton:true },
+  { id:"myelin_sheath",    label:"Vaina de mielina",            color:"#ffe066" },
+  { id:"schwann_nucleus",  label:"Núcleo de célula de Schwann", color:"#ff6f9c" },
+  { id:"axon_terminal",    label:"Terminal axónico",            color:"#5ce27a" },
+  { id:"synaptic_bouton",  label:"Botón sináptico",             color:"#c8ff5c" },
+  { id:"node_of_ranvier",  label:"Nodo de Ranvier",             color:"#7de3ff" },
+  { id:"unassigned",       label:"Sin asignar",                 color:"#4a5666" },
+];
+
+const CLASS_BY_ID = new Map(CLASSES.map(c => [c.id, c]));
+
+/* Propuesta inicial derivada del análisis geométrico del GLB:
+   centroides, dimensiones de bbox en mundo, elongación, material
+   compartido y repetición exacta de geometría. Nada aquí está
+   verificado visualmente; ese es justamente el trabajo de esta
+   herramienta. */
+const PROPOSAL = {
+  soma:             ["mesh_id29"],
+  nucleus:          ["mesh_id201"],
+  axon:             ["mesh_id71"],
+  myelin_sheath:    ["mesh_id118","mesh_id124","mesh_id125","mesh_id131"],
+  schwann_nucleus:  ["mesh_id137","mesh_id150","mesh_id156","mesh_id157"],
+  synaptic_bouton:  ["mesh_id162","mesh_id168","mesh_id169","mesh_id170","mesh_id171","mesh_id177"],
+  axon_terminal:    ["mesh_id67","mesh_id83","mesh_id87","mesh_id91","mesh_id95","mesh_id99","mesh_id105"],
+  dendrite_primary: ["mesh_id39","mesh_id43","mesh_id47","mesh_id57","mesh_id63"],
+  dendrite:         ["mesh_id205","mesh_id209","mesh_id231","mesh_id235","mesh_id239","mesh_id240",
+                     "mesh_id254","mesh_id258","mesh_id262","mesh_id263","mesh_id271","mesh_id275",
+                     "mesh_id279","mesh_id286","mesh_id290","mesh_id294","mesh_id298","mesh_id299",
+                     "mesh_id300"],
+};
+
+/**
+ * Deduce la clase a partir de un slug con o sin sufijo numérico.
+ * @param {string} name
+ * @returns {string|null}
+ */
+function inferClassFromSlug(name) {
+  if (CLASS_BY_ID.has(name)) return name;
+  const stripped = name.replace(/_\d{2,}$/, "");
+  return CLASS_BY_ID.has(stripped) ? stripped : null;
+}
+
+const PROPOSAL_BY_NODE = new Map();
+for (const [cls, nodes] of Object.entries(PROPOSAL)) {
+  for (const n of nodes) PROPOSAL_BY_NODE.set(n, cls);
+}
+
+/* ============================================================
+   Escena
+   ============================================================ */
+
+const stage = document.getElementById("stage");
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(38, 1, 0.001, 100);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.09;
+
+scene.add(new THREE.HemisphereLight(0xcfe3ff, 0x141d28, 1.15));
+const key = new THREE.DirectionalLight(0xffffff, 1.5);
+key.position.set(2.4, 3.2, 2.0);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0x88b4ff, 0.5);
+rim.position.set(-2.2, -0.8, -1.6);
+scene.add(rim);
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+
+/* Contorno de la selección: lee como instrumento y no depende
+   de post-proceso. */
+let outline = null;
+
+/* ============================================================
+   Estado
+   ============================================================ */
+
+/** @type {Array<{mesh:THREE.Mesh, node:string, meshName:string, material:number|null,
+ *   triangles:number, hasUV:boolean, centroid:number[], size:number[],
+ *   cls:string, proposed:string, confirmed:boolean, flat:THREE.Material,
+ *   original:THREE.Material}>} */
+let parts = [];
+let selected = null;
+let isolating = false;
+let showOriginal = false;
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", resize);
+
+/* ============================================================
+   Carga del GLB
+   ============================================================ */
+
+const loader = new GLTFLoader();
+
+function buildFromGltf(gltf) {
+  scene.add(gltf.scene);
+
+  const collected = [];
+  gltf.scene.updateWorldMatrix(true, true);
+
+  gltf.scene.traverse(obj => {
+    if (!obj.isMesh) return;
+
+    const geom = obj.geometry;
+    const tris = geom.index ? geom.index.count / 3
+                            : geom.attributes.position.count / 3;
+
+    geom.computeBoundingBox();
+    const box = geom.boundingBox.clone().applyMatrix4(obj.matrixWorld);
+    const c = box.getCenter(new THREE.Vector3());
+    const s = box.getSize(new THREE.Vector3());
+
+    const node = obj.name || "(sin nombre)";
+    // El GLB limpio ya trae nombres semánticos y la clase en extras, así
+    // que la misma herramienta sirve para verificarlo: se infiere del slug
+    // (soma, myelin_sheath_03) o se lee de node.extras.class.
+    const proposed =
+      PROPOSAL_BY_NODE.get(node)
+      ?? (CLASS_BY_ID.has(obj.userData?.class) ? obj.userData.class : null)
+      ?? inferClassFromSlug(node)
+      ?? "unassigned";
+
+    const original = obj.material;
+    const flat = new THREE.MeshStandardMaterial({
+      color: 0xffffff, roughness: 0.52, metalness: 0.0,
+      side: THREE.DoubleSide, flatShading: false,
+    });
+
+    obj.material = flat;
+
+    collected.push({
+      mesh: obj,
+      node,
+      meshName: geom.name || node,
+      materialName: Array.isArray(original) ? null : (original?.name || null),
+      triangles: Math.round(tris),
+      hasUV: !!geom.attributes.uv,
+      centroid: [c.x, c.y, c.z].map(v => +v.toFixed(4)),
+      size: [s.x, s.y, s.z].map(v => +v.toFixed(4)),
+      cls: proposed,
+      proposed,
+      confirmed: false,
+      flat,
+      original,
+    });
+  });
+
+  parts = collected;
+  applyColors();
+  frameAll();
+  renderLegend();
+  renderRoster();
+  updateProgress();
+
+  document.getElementById("hudMeshes").textContent = parts.length;
+  document.getElementById("hudTris").textContent =
+    parts.reduce((a, p) => a + p.triangles, 0).toLocaleString("es-MX");
+
+  document.getElementById("drop").classList.add("hide");
+  resize();
+}
+
+function loadBuffer(buf) {
+  loader.parse(buf, "", buildFromGltf, err => {
+    const inner = document.querySelector(".drop-inner");
+    inner.querySelector("h1").textContent = "Ese archivo no es un glTF válido";
+    inner.querySelector("p").innerHTML =
+      `El lector devolvió: <code>${err.message}</code>. Prueba con <code>Neurona.glb</code> tal como salió del repositorio.`;
+  });
+}
+
+/* Intento automático: sirve cuando la página se abre desde un
+   servidor local (python -m http.server) con el .glb al lado.
+   Con file:// el navegador bloquea el fetch, así que caemos a
+   la zona de arrastre sin ruido. */
+(async () => {
+  try {
+    const res = await fetch("./Neurona.glb");
+    if (!res.ok) return;
+    loadBuffer(await res.arrayBuffer());
+  } catch { /* se queda la zona de carga */ }
+})();
+
+const fileInput = document.getElementById("fileInput");
+document.getElementById("fileBtn").onclick = () => fileInput.click();
+fileInput.onchange = e => {
+  const f = e.target.files[0];
+  if (f) f.arrayBuffer().then(loadBuffer);
+};
+
+addEventListener("dragover", e => { e.preventDefault(); document.body.classList.add("dragging"); });
+addEventListener("dragleave", () => document.body.classList.remove("dragging"));
+addEventListener("drop", e => {
+  e.preventDefault();
+  document.body.classList.remove("dragging");
+  const f = e.dataTransfer.files[0];
+  if (f) f.arrayBuffer().then(loadBuffer);
+});
+
+/* ============================================================
+   Cámara
+   ============================================================ */
+
+function frameObjects(list) {
+  if (!list.length) return;
+  const box = new THREE.Box3();
+  for (const p of list) box.expandByObject(p.mesh);
+  const center = box.getCenter(new THREE.Vector3());
+  const radius = box.getSize(new THREE.Vector3()).length() / 2 || 0.1;
+  const dist = radius / Math.sin((camera.fov * Math.PI / 180) / 2) * 1.25;
+
+  controls.target.copy(center);
+  const dir = new THREE.Vector3(0.55, 0.42, 1).normalize();
+  camera.position.copy(center).addScaledVector(dir, dist);
+  camera.near = Math.max(dist / 500, 0.0005);
+  camera.far = dist * 12;
+  camera.updateProjectionMatrix();
+  controls.update();
+}
+
+const frameAll = () => frameObjects(parts);
+
+/* ============================================================
+   Color y visibilidad
+   ============================================================ */
+
+function applyColors() {
+  for (const p of parts) {
+    const cls = CLASS_BY_ID.get(p.cls);
+    p.flat.color.set(cls.color);
+    // Las no confirmadas se muestran algo lavadas; al confirmar
+    // el color satura. El estado se lee en el visor, no solo en la lista.
+    p.flat.color.lerp(new THREE.Color(0x2a333f), p.confirmed ? 0 : 0.42);
+    p.mesh.material = showOriginal ? p.original : p.flat;
+  }
+  applyVisibility();
+}
+
+function applyVisibility() {
+  for (const p of parts) {
+    p.mesh.visible = !isolating || !selected || p.cls === selected.cls;
+  }
+}
+
+function setOutline(part) {
+  if (outline) { outline.geometry.dispose(); outline.parent?.remove(outline); outline = null; }
+  if (!part) return;
+  const edges = new THREE.EdgesGeometry(part.mesh.geometry, 28);
+  outline = new THREE.LineSegments(
+    edges,
+    new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.85 })
+  );
+  part.mesh.add(outline);
+}
+
+/* ============================================================
+   Selección
+   ============================================================ */
+
+function select(part, { focusRow = true } = {}) {
+  selected = part;
+  setOutline(part);
+  applyVisibility();
+  renderLegend();
+  renderRoster({ scrollTo: focusRow ? part : null });
+  renderDetail();
+  document.getElementById("hudSel").textContent =
+    part ? `${slugOf(part)} · ${part.node}` : "sin selección";
+}
+
+renderer.domElement.addEventListener("pointerdown", ev => {
+  if (ev.button !== 0) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
+  pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(
+    parts.filter(p => p.mesh.visible).map(p => p.mesh), false
+  );
+  if (!hits.length) return;
+  const part = parts.find(p => p.mesh === hits[0].object);
+  if (part) select(part);
+});
+
+/* ============================================================
+   Asignación
+   ============================================================ */
+
+function assign(part, clsId) {
+  if (!part) return;
+  part.cls = clsId;
+  part.confirmed = true;   // asignar explícitamente cuenta como validar
+  applyColors();
+  renderLegend();
+  renderRoster({ scrollTo: part });
+  renderDetail();
+  updateProgress();
+}
+
+function confirmPart(part) {
+  if (!part) return;
+  part.confirmed = true;
+  applyColors();
+  renderRoster({ scrollTo: part });
+  renderDetail();
+  updateProgress();
+}
+
+function nextUnconfirmed() {
+  const start = selected ? parts.indexOf(selected) + 1 : 0;
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[(start + i) % parts.length];
+    if (!p.confirmed) { select(p); frameObjects([p]); return; }
+  }
+}
+
+/* ============================================================
+   Nomenclatura: slug determinista
+   Las estructuras repetidas se numeran por posición a lo largo
+   del eje X, que es el eje longitudinal del axón en este modelo.
+   Así el índice es estable entre exportaciones y anatómicamente
+   interpretable (myelin_sheath_01 es la más proximal al soma).
+   ============================================================ */
+
+function slugMap() {
+  const byClass = new Map();
+  for (const p of parts) {
+    if (!byClass.has(p.cls)) byClass.set(p.cls, []);
+    byClass.get(p.cls).push(p);
+  }
+  const out = new Map();
+  for (const [cls, list] of byClass) {
+    list.sort((a, b) => a.centroid[0] - b.centroid[0]);
+    const single = list.length === 1;
+    list.forEach((p, i) => {
+      out.set(p, single ? cls : `${cls}_${String(i + 1).padStart(2, "0")}`);
+    });
+  }
+  return out;
+}
+
+let SLUGS = new Map();
+const slugOf = p => SLUGS.get(p) ?? p.cls;
+
+/* ============================================================
+   Interfaz: leyenda
+   ============================================================ */
+
+const legendEl = document.getElementById("legend");
+
+function renderLegend() {
+  const counts = new Map();
+  for (const p of parts) counts.set(p.cls, (counts.get(p.cls) ?? 0) + 1);
+
+  legendEl.innerHTML = "";
+  CLASSES.forEach((c, i) => {
+    const n = counts.get(c.id) ?? 0;
+    const btn = document.createElement("button");
+    btn.className = "legend-row";
+    btn.setAttribute("aria-pressed", String(selected?.cls === c.id));
+    btn.title = selected
+      ? `Asignar «${c.label}» a la malla seleccionada`
+      : `${c.label}: ${n} malla(s)`;
+
+    const key = i < 9 ? String(i + 1) : (i === 9 ? "0" : "");
+
+    btn.innerHTML = `
+      <span class="swatch" style="background:${c.color}"></span>
+      <span class="legend-name">${c.label}</span>
+      <span class="legend-count">${n || ""}</span>
+      <span class="legend-key">${key}</span>`;
+
+    btn.onclick = () => {
+      if (selected) assign(selected, c.id);
+      else {
+        const first = parts.find(p => p.cls === c.id);
+        if (first) { select(first); frameObjects(parts.filter(p => p.cls === c.id)); }
+      }
+    };
+    legendEl.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   Interfaz: censo de mallas
+   ============================================================ */
+
+const rosterEl = document.getElementById("roster");
+
+function renderRoster({ scrollTo = null } = {}) {
+  SLUGS = slugMap();
+  rosterEl.innerHTML = "";
+
+  for (const c of CLASSES) {
+    const list = parts.filter(p => p.cls === c.id);
+    if (!list.length) continue;
+    list.sort((a, b) => a.centroid[0] - b.centroid[0]);
+
+    const head = document.createElement("div");
+    head.className = "group-head";
+    const conflict = c.singleton && list.length > 1;
+    head.innerHTML = `
+      <span class="swatch" style="background:${c.color}"></span>
+      <b>${c.label}</b>
+      <span>${list.length}</span>
+      ${conflict ? `<span class="warn" style="margin-left:auto">se esperaba 1</span>` : ""}`;
+    rosterEl.appendChild(head);
+
+    for (const p of list) {
+      const row = document.createElement("div");
+      row.className = "mesh-row" + (p === selected ? " sel" : "");
+      row.tabIndex = 0;
+      row.innerHTML = `
+        <span>
+          <span class="slug">${slugOf(p)}</span><br>
+          <span class="node">${p.node}${p.hasUV ? "" : " · sin uv"}</span>
+        </span>
+        <span class="tris">${p.triangles.toLocaleString("es-MX")}</span>
+        <span class="state ${p.confirmed ? "ok" : ""}" title="${p.confirmed ? "confirmada" : "propuesta sin confirmar"}"></span>`;
+      row.onclick = () => { select(p, { focusRow:false }); };
+      row.ondblclick = () => frameObjects([p]);
+      row.onkeydown = e => { if (e.key === "Enter") { select(p, { focusRow:false }); confirmPart(p); } };
+      row.onmouseenter = () => { if (p !== selected) setOutline(p); };
+      row.onmouseleave = () => setOutline(selected);
+      if (p === scrollTo) requestAnimationFrame(() => row.scrollIntoView({ block:"nearest" }));
+      rosterEl.appendChild(row);
+    }
+  }
+}
+
+/* ============================================================
+   Interfaz: detalle y progreso
+   ============================================================ */
+
+function renderDetail() {
+  const el = document.getElementById("detail");
+  if (!selected) {
+    el.innerHTML = "<div>Selecciona una malla en el visor o en la lista.</div>";
+    return;
+  }
+  const p = selected;
+  const cls = CLASS_BY_ID.get(p.cls);
+  const changed = p.cls !== p.proposed;
+  el.innerHTML = `
+    <div><span class="k">${slugOf(p)}</span> · ${cls.label}${changed ? " <em>(corregida)</em>" : ""}</div>
+    <div>nodo <span class="k">${p.node}</span> · ${p.triangles.toLocaleString("es-MX")} tri · uv ${p.hasUV ? "sí" : "no"}</div>
+    <div>centro [${p.centroid.join(", ")}]</div>
+    <div>tamaño [${p.size.join(", ")}]</div>
+    <div>${p.confirmed ? "confirmada" : "propuesta geométrica, sin confirmar"}</div>`;
+}
+
+function updateProgress() {
+  const ok = parts.filter(p => p.confirmed).length;
+  document.getElementById("progText").textContent = `${ok} / ${parts.length} confirmadas`;
+  document.getElementById("progFill").style.width =
+    parts.length ? `${(ok / parts.length) * 100}%` : "0%";
+
+  const un = parts.filter(p => p.cls === "unassigned").length;
+  document.getElementById("exportHint").textContent =
+    un ? `${un} malla(s) sin asignar; se exportan como unassigned.` : "";
+}
+
+/* ============================================================
+   Acciones
+   ============================================================ */
+
+document.getElementById("btnConfirmClass").onclick = () => {
+  if (!selected) return;
+  for (const p of parts) if (p.cls === selected.cls) p.confirmed = true;
+  applyColors(); renderRoster({ scrollTo:selected }); renderDetail(); updateProgress();
+};
+
+const btnIso = document.getElementById("btnIsolate");
+btnIso.onclick = () => {
+  isolating = !isolating;
+  btnIso.setAttribute("aria-pressed", String(isolating));
+  btnIso.textContent = isolating ? "Mostrar todo" : "Aislar clase";
+  applyVisibility();
+  if (isolating && selected) frameObjects(parts.filter(p => p.cls === selected.cls));
+  else frameAll();
+};
+
+const btnOrig = document.getElementById("btnOriginal");
+btnOrig.onclick = () => {
+  showOriginal = !showOriginal;
+  btnOrig.setAttribute("aria-pressed", String(showOriginal));
+  applyColors();
+};
+
+document.getElementById("btnReset").onclick = () => {
+  if (!confirm("Se descartan tus correcciones y confirmaciones. ¿Continuar?")) return;
+  for (const p of parts) { p.cls = p.proposed; p.confirmed = false; }
+  applyColors(); renderLegend(); renderRoster(); renderDetail(); updateProgress();
+};
+
+function download(name, text) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type:"application/json" }));
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function setHint(msg) { document.getElementById("exportHint").textContent = msg; }
+
+const mapInput = document.getElementById("mapInput");
+document.getElementById("btnImport").onclick = () => mapInput.click();
+mapInput.onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  f.text().then(txt => {
+    let data;
+    try { data = JSON.parse(txt); }
+    catch { setHint("Ese archivo no es JSON válido; usa el mapping.json que exportó esta herramienta."); return; }
+
+    const byNode = new Map((data.parts ?? []).map(r => [r.node, r]));
+    let restored = 0, unknown = 0, missing = 0;
+
+    for (const p of parts) {
+      const rec = byNode.get(p.node);
+      if (!rec) { missing++; continue; }
+      if (CLASS_BY_ID.has(rec.class)) {
+        p.cls = rec.class;
+        p.confirmed = !!rec.confirmed;
+        restored++;
+      } else {
+        // Clase de una taxonomía distinta: se marca para revisión
+        // en lugar de descartarla en silencio.
+        p.cls = "unassigned";
+        p.confirmed = false;
+        unknown++;
+      }
+    }
+
+    applyColors(); renderLegend(); renderRoster(); renderDetail(); updateProgress();
+    setHint([
+      `${restored} de ${parts.length} mallas restauradas`,
+      unknown ? `${unknown} con clase fuera de la taxonomía` : null,
+      missing ? `${missing} sin registro en el archivo` : null,
+    ].filter(Boolean).join("; ") + ".");
+  });
+};
+
+document.getElementById("btnExport").onclick = () => {
+  SLUGS = slugMap();
+  const payload = {
+    schema: "dunne.neuron.mapping/1",
+    source: "Neurona.glb",
+    generated: new Date().toISOString(),
+    longitudinal_axis: "x",
+    total_meshes: parts.length,
+    confirmed: parts.filter(p => p.confirmed).length,
+    parts: parts.map(p => ({
+      slug: slugOf(p),
+      class: p.cls,
+      label_es: CLASS_BY_ID.get(p.cls).label,
+      node: p.node,
+      triangles: p.triangles,
+      has_uv: p.hasUV,
+      material_name: p.materialName,
+      centroid: p.centroid,
+      size: p.size,
+      proposed_class: p.proposed,
+      corrected: p.cls !== p.proposed,
+      confirmed: p.confirmed,
+    })),
+    groups: Object.fromEntries(
+      CLASSES.map(c => [c.id, parts.filter(p => p.cls === c.id).map(p => p.node)])
+             .filter(([, v]) => v.length)
+    ),
+  };
+  download("mapping.json", JSON.stringify(payload, null, 2));
+};
+
+document.getElementById("btnContent").onclick = () => {
+  SLUGS = slugMap();
+  const used = CLASSES.filter(c => parts.some(p => p.cls === c.id) && c.id !== "unassigned");
+  const payload = {
+    schema: "dunne.neuron.content/1",
+    locale: "es-MX",
+    note: "Un entrada por estructura anatómica. Rellenar y revisar antes de publicar; las referencias van en APA 7.",
+    structures: used.map(c => ({
+      class: c.id,
+      label: c.label,
+      short: "",
+      long: "",
+      references: [],
+      instances: parts.filter(p => p.cls === c.id).map(p => slugOf(p)),
+    })),
+  };
+  download("content.es.json", JSON.stringify(payload, null, 2));
+};
+
+/* ============================================================
+   Teclado
+   ============================================================ */
+
+addEventListener("keydown", e => {
+  if (e.target.matches("input,textarea")) return;
+
+  if (/^[1-9]$/.test(e.key)) {
+    const c = CLASSES[+e.key - 1];
+    if (c && selected) { assign(selected, c.id); e.preventDefault(); }
+    return;
+  }
+  if (e.key === "0" && CLASSES[9] && selected) { assign(selected, CLASSES[9].id); e.preventDefault(); return; }
+
+  switch (e.key.toLowerCase()) {
+    case "enter": confirmPart(selected); break;
+    case "f": if (selected) frameObjects([selected]); else frameAll(); break;
+    case "i": btnIso.click(); break;
+    case "arrowright": nextUnconfirmed(); e.preventDefault(); break;
+    case "escape": select(null); break;
+  }
+});
+
+/* ============================================================
+   Bucle
+   ============================================================ */
+
+resize();
+(function tick() {
+  controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>

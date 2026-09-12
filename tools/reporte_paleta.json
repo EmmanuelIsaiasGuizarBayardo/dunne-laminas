@@ -1,0 +1,116 @@
+{
+  "input": "Neurona_v2.glb",
+  "output": "Neurona_v3.glb",
+  "materials_before": 4,
+  "materials_after": 9,
+  "palette": {
+    "dendrite": {
+      "hex": "#1e88ff",
+      "baseColorFactor": [
+        0.012983,
+        0.246201,
+        1.0,
+        1.0
+      ],
+      "roughness": 0.5,
+      "meshes": 19,
+      "rationale": "Azul: lado de entrada de información."
+    },
+    "nucleus": {
+      "hex": "#c81e2d",
+      "baseColorFactor": [
+        0.57758,
+        0.012983,
+        0.026241,
+        1.0
+      ],
+      "roughness": 0.58,
+      "meshes": 1,
+      "rationale": "Rojo profundo: más frío y oscuro que el naranja del soma, así se lee como núcleo interior y no compite con el rosa de Schwann."
+    },
+    "myelin_sheath": {
+      "hex": "#ffe066",
+      "baseColorFactor": [
+        1.0,
+        0.745404,
+        0.132868,
+        1.0
+      ],
+      "roughness": 0.34,
+      "meshes": 4,
+      "rationale": "Amarillo con brillo ceroso: evoca la mielina sin pretender realismo."
+    },
+    "schwann_nucleus": {
+      "hex": "#ff6f9c",
+      "baseColorFactor": [
+        1.0,
+        0.158961,
+        0.332452,
+        1.0
+      ],
+      "roughness": 0.55,
+      "meshes": 4,
+      "rationale": "Rosa: célula distinta de la neurona, por eso sale de la escala neuronal."
+    },
+    "synaptic_bouton": {
+      "hex": "#c8ff5c",
+      "baseColorFactor": [
+        0.57758,
+        1.0,
+        0.107023,
+        1.0
+      ],
+      "roughness": 0.44,
+      "meshes": 6,
+      "rationale": "Verde limón: el punto final del recorrido, el más brillante de la rama de salida."
+    },
+    "axon_terminal": {
+      "hex": "#5ce27a",
+      "baseColorFactor": [
+        0.107023,
+        0.760525,
+        0.194618,
+        1.0
+      ],
+      "roughness": 0.5,
+      "meshes": 7,
+      "rationale": "Verde: continuidad con el axón."
+    },
+    "axon": {
+      "hex": "#00d3a7",
+      "baseColorFactor": [
+        0.0,
+        0.651406,
+        0.386429,
+        1.0
+      ],
+      "roughness": 0.46,
+      "meshes": 1,
+      "rationale": "Verde agua: lado de salida; contrasta con el azul de entrada."
+    },
+    "dendrite_primary": {
+      "hex": "#63b0ff",
+      "baseColorFactor": [
+        0.124772,
+        0.434154,
+        1.0,
+        1.0
+      ],
+      "roughness": 0.5,
+      "meshes": 5,
+      "rationale": "Azul claro: mismo lado, jerarquía distinta."
+    },
+    "soma": {
+      "hex": "#ff7a00",
+      "baseColorFactor": [
+        1.0,
+        0.194618,
+        0.0,
+        1.0
+      ],
+      "roughness": 0.52,
+      "meshes": 1,
+      "rationale": "Naranja de marca DUNNE: el cuerpo celular es el ancla visual."
+    }
+  }
+}

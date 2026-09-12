@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tu neurona · Sala DUNNE</title>
+<meta name="theme-color" content="#0b1218">
+<link rel="icon" href="./assets/Dunne_oscuros.png">
+<link rel="apple-touch-icon" href="./assets/icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="./sala.css?v=2">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+</head>
+
+<body class="room">
+
+<header class="bar">
+  <p class="seat">Neurona <b id="seat">—</b> <span class="polarity" id="polarityTag"></span></p>
+  <div class="bar-right">
+    <button type="button" class="ghost" id="fullscreen" hidden>Pantalla completa</button>
+    <p class="wire" id="wire">conectando…</p>
+  </div>
+</header>
+
+<main class="cell">
+
+  <model-viewer class="cell-model" id="viewer"
+    src="./assets/Neurona_sala.glb"
+    alt="Modelo de una motoneurona: soma naranja, dendritas azules, axón verde con cuatro vainas de mielina amarillas."
+    poster="./assets/poster.webp"
+    loading="eager"
+    camera-controls
+    touch-action="none"
+    interaction-prompt="none"
+    environment-image="neutral"
+    exposure="1.1"
+    shadow-intensity="0.3"
+    camera-orbit="-14deg 24deg 106%"></model-viewer>
+
+  <!-- Trazo del potencial de membrana. Es el corazón didáctico: sin él la
+       suma temporal se intuye pero no se ve. -->
+  <canvas class="trace" id="trace" width="900" height="220"
+          aria-label="Trazo del potencial de membrana"></canvas>
+
+  <p class="readout">
+    <span id="vm">-70.0 mV</span>
+    <span class="dim">umbral -55 mV</span>
+    <span class="dim" id="dilation">×—</span>
+  </p>
+
+</main>
+
+<footer class="controls">
+  <button type="button" class="stim" id="stim">Estimular dendrita</button>
+  <div class="row">
+    <button type="button" class="ghost" id="myelin" aria-pressed="false">Quitar mielina</button>
+    <button type="button" class="ghost" id="polarity" aria-pressed="false">Volverla inhibitoria</button>
+  </div>
+  <p class="dim" id="downstream">—</p>
+</footer>
+
+<script type="module">
+/* ==========================================================================
+   Una neurona por dispositivo.
+
+   Modelo integrate-and-fire con fuga en unidades reales, ejecutado en tiempo
+   dilatado: con factor 20 la constante de membrana de 20 ms equivale a 400 ms
+   de reloj de pared. El factor se muestra en pantalla para no representar una
+   velocidad falsa.
+   ========================================================================== */
+
+const $ = id => document.getElementById(id);
+const viewer = $("viewer");
+
+// Parámetros de membrana en unidades reales (mV, ms).
+const V_REST = -70;
+const V_TH = -55;
+const V_RESET = -75;
+const V_FLOOR = -85;   // techo de hiperpolarización, cercano al potencial de K+
+const TAU_M = 20;
+const T_REFRAC = 5;
+
+let config = { dilation: 20, weight: 0.6, axon_length_m: 0.8,
+               v_myelinated_ms: 60, v_unmyelinated_ms: 6 };
+let targets = [];
+let seat = null;
+let myelinated = true;
+let polarity = "excitatory";
+
+let vm = V_REST;
+let refractoryUntil = 0;
+let simTime = 0;
+const history = [];
+
+/* --------------------------------------------------- datos de propagación -- */
+
+/* Orden e instante de cada destello derivados de las coordenadas del modelo.
+   `frac` es la posición normalizada sobre el eje longitudinal: 0 en el soma,
+   1 en el botón más distal. */
+let hops = [];         // vainas de mielina, en orden proximal a distal
+let sequence = [];     // todas las estructuras del eje, con su fracción
+let dendrites = [];
+
+fetch("./propagacion.json")
+  .then(r => r.json())
+  .then(data => {
+    sequence = data.sequence ?? [];
+    hops = (data.myelin ?? []).map(material => ({
+      material,
+      frac: sequence.find(s => s.material === material)?.frac ?? 0,
+    }));
+    dendrites = data.dendrites ?? [];
+  })
+  .catch(() => { /* sin datos, la propagación cae al modo continuo */ });
+
+/* --------------------------------------------------------------- conexión -- */
+
+const socket = new WebSocket(`ws://${location.host}/ws${location.search}`);
+
+socket.addEventListener("open", () => {
+  $("wire").textContent = "en el circuito";
+  $("wire").classList.remove("bad");
+});
+
+socket.addEventListener("close", () => {
+  $("wire").textContent = "desconectada · recarga";
+  $("wire").classList.add("bad");
+});
+
+socket.addEventListener("message", event => {
+  const msg = JSON.parse(event.data);
+
+  if (msg.type === "welcome") {
+    seat = msg.seat;
+    config = { ...config, ...msg.config };
+    targets = msg.targets ?? [];
+    setPolarity(msg.polarity ?? "excitatory", false);
+    $("seat").textContent = seat ?? "—";
+    showDilation();
+    describeDownstream();
+
+  } else if (msg.type === "targets") {
+    targets = msg.targets ?? [];
+    describeDownstream();
+
+  } else if (msg.type === "roster") {
+    config = { ...config, ...msg.config };
+    showDilation();
+
+  } else if (msg.type === "polarity") {
+    setPolarity(msg.kind, false);
+
+  } else if (msg.type === "input") {
+    inject(msg.weight ?? config.weight, msg.from_seat);
+
+  } else if (msg.type === "reset") {
+    vm = V_REST;
+    history.length = 0;
+  }
+});
+
+const showDilation = () =>
+  $("dilation").textContent = `×${config.dilation} más lento que la realidad`;
+
+function describeDownstream() {
+  const verb = polarity === "inhibitory" ? "inhibe a" : "excita a";
+  $("downstream").textContent = targets.length
+    ? `tu axón ${verb}: ${targets.map(t => `neurona ${t}`).join(", ")}`
+    : "eres el final del circuito";
+}
+
+/* --------------------------------------------------------------- dinámica -- */
+
+/**
+ * Inyecta un potencial postsináptico.
+ *
+ * Salto instantáneo de voltaje (sinapsis delta) en lugar de una corriente
+ * con forma temporal: suficiente para reproducir suma temporal y espacial sin
+ * introducir una constante adicional. Un peso negativo produce un IPSP.
+ *
+ * @param {number} weight Fracción de la distancia reposo-umbral; negativa si
+ *   la presináptica es inhibitoria.
+ * @param {number|null} fromSeat Asiento de origen, o null si es local.
+ */
+function inject(weight, fromSeat = null) {
+  if (simTime < refractoryUntil) return;
+  vm = Math.max(V_FLOOR, vm + weight * (V_TH - V_REST));
+
+  if (dendrites.length) {
+    // La entrada llega por el árbol dendrítico: se enciende una dendrita al
+    // azar para indicar el origen de la señal.
+    flash(dendrites[Math.floor(Math.random() * dendrites.length)], 240);
+  }
+  pulse(weight < 0 ? "inhibitorio" : fromSeat === null ? "local" : "remoto");
+}
+
+function fire() {
+  vm = V_RESET;
+  refractoryUntil = simTime + T_REFRAC;
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "spike", at: Date.now() }));
+  }
+  propagate();
+}
+
+/* ------------------------------------------------------------ propagación -- */
+
+/** Retardo de conducción en milisegundos de reloj de pared. */
+function travelMs() {
+  const speed = myelinated ? config.v_myelinated_ms : config.v_unmyelinated_ms;
+  return config.axon_length_m / speed * 1000 * config.dilation;
+}
+
+/**
+ * Enciende la célula según el modo de conducción vigente.
+ *
+ * Con mielina la conducción es saltatoria: el destello salta de vaina en
+ * vaina en el instante que corresponde a su posición sobre el axón. Sin
+ * mielina es continua: el mismo recorrido se barre de forma progresiva y un
+ * orden de magnitud más despacio.
+ */
+function propagate() {
+  const travel = travelMs();
+  flash("dunne_soma", 260);
+
+  if (myelinated && hops.length) {
+    for (const hop of hops) {
+      setTimeout(() => flash(hop.material, 200), travel * hop.frac);
+    }
+  } else {
+    // Barrido continuo: el axón se mantiene encendido todo el trayecto.
+    flash("dunne_axon", Math.max(travel * 0.85, 300));
+  }
+
+  for (const item of sequence) {
+    if (item.class === "axon_terminal" || item.class === "synaptic_bouton") {
+      setTimeout(() => flash(item.material, 220), travel * item.frac);
+    }
+  }
+}
+
+const baseColors = new Map();
+
+/** Guarda y devuelve el color original de un material. */
+function colorOf(name) {
+  const material = viewer.model?.materials?.find(m => m.name === name);
+  if (!material) return null;
+  if (!baseColors.has(name)) {
+    baseColors.set(name, [...material.pbrMetallicRoughness.baseColorFactor]);
+  }
+  return material;
+}
+
+/** Enciende un material en blanco y lo devuelve a su color. */
+function flash(name, ms = 260) {
+  const material = colorOf(name);
+  if (!material) return;
+  const base = baseColors.get(name);
+  material.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, base[3]]);
+  setTimeout(() => {
+    // Si la mielina está apagada su color de reposo es el degradado, no el
+    // original: se recalcula en vez de restaurar a ciegas.
+    material.pbrMetallicRoughness.setBaseColorFactor(restingColor(name));
+  }, ms);
+}
+
+/** Color de reposo de un material, según el estado de la mielina. */
+function restingColor(name) {
+  const base = baseColors.get(name) ?? [1, 1, 1, 1];
+  if (!myelinated && name.startsWith("dunne_myelin_sheath")) {
+    // Mielina dañada: se desatura hacia un gris pálido. No se oculta la
+    // malla, porque la vaina no desaparece, se degrada y deja de aislar.
+    const grey = 0.18;
+    return [grey, grey * 1.05, grey * 1.15, base[3]];
+  }
+  return base;
+}
+
+/** Aplica el color de reposo a las cuatro vainas. */
+function paintMyelin() {
+  for (const hop of hops.length ? hops : []) {
+    const material = colorOf(hop.material);
+    if (material) material.pbrMetallicRoughness.setBaseColorFactor(restingColor(hop.material));
+  }
+}
+
+/* ----------------------------------------------------------------- trazo --- */
+
+const canvas = $("trace");
+const ctx = canvas.getContext("2d");
+const WINDOW_MS = 2500;
+let lastFrame = performance.now();
+
+function loop(now) {
+  const wallDelta = Math.min(now - lastFrame, 120);
+  lastFrame = now;
+
+  // El tiempo simulado avanza más despacio que el de pared; ese es el factor
+  // de dilatación que hace perceptible la dinámica.
+  const dt = wallDelta / config.dilation;
+  simTime += dt;
+
+  if (simTime >= refractoryUntil) {
+    vm += ((V_REST - vm) / TAU_M) * dt;
+    if (vm >= V_TH) fire();
+  } else {
+    vm = V_RESET;
+  }
+
+  history.push({ t: simTime, v: vm });
+  while (history.length && history[0].t < simTime - WINDOW_MS) history.shift();
+
+  draw();
+  $("vm").textContent = `${vm.toFixed(1)} mV`;
+  requestAnimationFrame(loop);
+}
+
+const styles = getComputedStyle(document.documentElement);
+const pick = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+
+function yOf(v) {
+  const top = -40, bottom = -90;
+  return canvas.height - ((v - bottom) / (top - bottom)) * canvas.height;
+}
+
+function draw() {
+  const { width, height } = canvas;
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = pick("--murmur", "#8fa1b4");
+  ctx.globalAlpha = 0.35;
+  ctx.setLineDash([4, 6]);
+  for (const v of [V_TH, V_REST]) {
+    ctx.beginPath();
+    ctx.moveTo(0, yOf(v));
+    ctx.lineTo(width, yOf(v));
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+
+  if (history.length < 2) return;
+
+  ctx.strokeStyle = polarity === "inhibitory"
+    ? pick("--cool", "#7de3ff") : pick("--flame", "#ff8419");
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  const t0 = simTime - WINDOW_MS;
+  history.forEach((point, i) => {
+    const x = ((point.t - t0) / WINDOW_MS) * width;
+    const y = yOf(point.v);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+}
+
+/* --------------------------------------------------------------- pulso UI -- */
+
+function pulse(kind) {
+  document.body.dataset.pulse = kind;
+  setTimeout(() => { delete document.body.dataset.pulse; }, 220);
+}
+
+/* -------------------------------------------------------------- controles -- */
+
+$("stim").addEventListener("click", () => inject(config.weight));
+
+$("myelin").addEventListener("click", () => {
+  myelinated = !myelinated;
+  const button = $("myelin");
+  button.setAttribute("aria-pressed", String(!myelinated));
+  button.textContent = myelinated ? "Quitar mielina" : "Devolver mielina";
+  document.body.dataset.demyelinated = myelinated ? "" : "on";
+  paintMyelin();
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "myelin", on: myelinated }));
+  }
+});
+
+/** Cambia la polaridad de la neurona completa, no de una sinapsis. */
+function setPolarity(kind, announce = true) {
+  polarity = kind;
+  const button = $("polarity");
+  const inhibitory = kind === "inhibitory";
+  button.setAttribute("aria-pressed", String(inhibitory));
+  button.textContent = inhibitory ? "Volverla excitatoria" : "Volverla inhibitoria";
+  $("polarityTag").textContent = inhibitory ? "inhibitoria" : "excitatoria";
+  document.body.dataset.polarity = kind;
+  describeDownstream();
+  if (announce && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "polarity", kind }));
+  }
+}
+
+$("polarity").addEventListener("click", () =>
+  setPolarity(polarity === "inhibitory" ? "excitatory" : "inhibitory"));
+
+// Barra espaciadora: estímulo desde pantallas fijas con teclado.
+addEventListener("keydown", event => {
+  if (event.code === "Space") { event.preventDefault(); inject(config.weight); }
+});
+
+/* ------------------------------------------------------- pantalla completa -- */
+
+/* La barra de direcciones consume altura y permite salir de la experiencia.
+   En iPhone la API de pantalla completa no está disponible para elementos
+   arbitrarios: ahí la vía es añadir a la pantalla de inicio, y el control se
+   oculta en lugar de fallar en silencio. */
+const fsButton = $("fullscreen");
+if (document.documentElement.requestFullscreen) {
+  fsButton.hidden = false;
+  const sync = () => {
+    fsButton.textContent = document.fullscreenElement ? "Salir" : "Pantalla completa";
+    fsButton.setAttribute("aria-pressed", String(!!document.fullscreenElement));
+  };
+  fsButton.addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+    } catch { /* el navegador lo rechazó; no hay nada que hacer */ }
+  });
+  document.addEventListener("fullscreenchange", sync);
+  sync();
+}
+
+/* --------------------------------------------------------------- telemetría -- */
+
+setInterval(() => {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "vm", v: Number(vm.toFixed(2)) }));
+  }
+}, 330);
+
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>

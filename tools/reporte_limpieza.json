@@ -1,0 +1,162 @@
+{
+  "input": "/mnt/user-data/uploads/Neurona.glb",
+  "output": "/mnt/user-data/outputs/Neurona_v2.glb",
+  "mapping_revision": 2,
+  "before": {
+    "file_bytes": 2326872,
+    "nodes": 70,
+    "meshes": 48,
+    "materials": 40,
+    "textures": 120,
+    "images": 17,
+    "extensions": [
+      "KHR_materials_ior",
+      "KHR_materials_specular"
+    ],
+    "max_depth": 9,
+    "triangles": 124218
+  },
+  "after": {
+    "file_bytes": 2316376,
+    "nodes": 49,
+    "meshes": 48,
+    "materials": 4,
+    "textures": 0,
+    "images": 0,
+    "extensions": [],
+    "max_depth": 1,
+    "triangles": 124218
+  },
+  "geometry": {
+    "original_extent": [
+      0.843012,
+      0.318058,
+      0.514577
+    ],
+    "normalize_scale": 1.18622305,
+    "final_extent": [
+      1.0,
+      0.377287,
+      0.610404
+    ],
+    "final_center": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "materials": [
+    {
+      "index": 0,
+      "name": "mat_shared_dendrite_synaptic_bouton",
+      "baseColorFactor": [
+        0.412543,
+        0.309469,
+        0.496933,
+        1.0
+      ],
+      "roughnessFactor": 0.05098,
+      "parts": [
+        "dendrite_01",
+        "dendrite_02",
+        "dendrite_03",
+        "dendrite_04",
+        "dendrite_05",
+        "dendrite_06",
+        "dendrite_07",
+        "dendrite_08",
+        "dendrite_09",
+        "dendrite_10",
+        "dendrite_11",
+        "dendrite_12",
+        "dendrite_13",
+        "dendrite_14",
+        "dendrite_15",
+        "dendrite_16",
+        "dendrite_17",
+        "dendrite_18",
+        "dendrite_19",
+        "synaptic_bouton_01",
+        "synaptic_bouton_02",
+        "synaptic_bouton_03",
+        "synaptic_bouton_04",
+        "synaptic_bouton_05",
+        "synaptic_bouton_06"
+      ]
+    },
+    {
+      "index": 1,
+      "name": "mat_shared_nucleus_schwann_nucleus",
+      "baseColorFactor": [
+        0.791298,
+        0.168269,
+        0.016807,
+        1.0
+      ],
+      "roughnessFactor": 0.05098,
+      "parts": [
+        "nucleus",
+        "schwann_nucleus_01",
+        "schwann_nucleus_02",
+        "schwann_nucleus_03",
+        "schwann_nucleus_04"
+      ]
+    },
+    {
+      "index": 2,
+      "name": "mat_myelin_sheath",
+      "baseColorFactor": [
+        1.0,
+        0.590619,
+        0.009134,
+        1.0
+      ],
+      "roughnessFactor": 0.6,
+      "parts": [
+        "myelin_sheath_01",
+        "myelin_sheath_02",
+        "myelin_sheath_03",
+        "myelin_sheath_04"
+      ]
+    },
+    {
+      "index": 3,
+      "name": "mat_shared_axon_axon_terminal_dendrite_primary_soma",
+      "baseColorFactor": [
+        0.520996,
+        0.391572,
+        0.630757,
+        1.0
+      ],
+      "roughnessFactor": 0.6,
+      "parts": [
+        "axon",
+        "axon_terminal_01",
+        "axon_terminal_02",
+        "axon_terminal_03",
+        "axon_terminal_04",
+        "axon_terminal_05",
+        "axon_terminal_06",
+        "axon_terminal_07",
+        "dendrite_primary_01",
+        "dendrite_primary_02",
+        "dendrite_primary_03",
+        "dendrite_primary_04",
+        "dendrite_primary_05",
+        "soma"
+      ]
+    }
+  ],
+  "triangles_by_class": {
+    "axon": 1050,
+    "axon_terminal": 6912,
+    "dendrite": 10290,
+    "dendrite_primary": 4590,
+    "myelin_sheath": 51200,
+    "nucleus": 3072,
+    "schwann_nucleus": 25600,
+    "soma": 3072,
+    "synaptic_bouton": 18432
+  },
+  "unmapped_meshes": []
+}

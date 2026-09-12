@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mural · Sala DUNNE</title>
+<meta name="theme-color" content="#0b1218">
+<link rel="icon" href="./assets/Dunne_oscuros.png">
+<link rel="stylesheet" href="./sala.css?v=2">
+</head>
+
+<body class="wall">
+
+<header class="wall-bar">
+  <div>
+    <p class="kicker">Sala interactiva · DUNNE</p>
+    <h1 class="wall-title">La red que forman ustedes</h1>
+  </div>
+  <dl class="vitals">
+    <div><dt>neuronas</dt><dd id="count">0</dd></div>
+    <div><dt>topología</dt><dd id="topo">—</dd></div>
+    <div><dt>tiempo</dt><dd id="dil">—</dd></div>
+    <div><dt>enlace</dt><dd id="wire">conectando…</dd></div>
+  </dl>
+</header>
+
+<main class="wall-grid">
+
+  <!-- Raster plot: una fila por neurona, el tiempo hacia la derecha. Es la
+       figura estándar de la electrofisiología, y aquí la producen personas. -->
+  <section class="panel raster-panel" aria-labelledby="raster-title">
+    <h2 id="raster-title" class="panel-title">
+      Actividad <span class="dim">cada marca es un potencial de acción</span>
+    </h2>
+    <canvas id="raster" aria-label="Registro de disparos por neurona"></canvas>
+  </section>
+
+  <!-- Grafo del circuito. El relleno de cada nodo es su voltaje en vivo. -->
+  <section class="panel graph-panel" aria-labelledby="graph-title">
+    <h2 id="graph-title" class="panel-title">
+      Circuito <span class="dim">el relleno es el voltaje</span>
+    </h2>
+    <div class="graph-hold"><svg id="graph" role="img"
+      aria-label="Grafo del circuito de neuronas"></svg></div>
+  </section>
+
+</main>
+
+<footer class="console">
+  <div class="console-block">
+    <p class="console-label">Topología</p>
+    <div class="chips" id="topoChips"></div>
+  </div>
+
+  <div class="console-block">
+    <p class="console-label">Dilatación temporal</p>
+    <div class="chips">
+      <button type="button" class="chip" data-dil="10">×10</button>
+      <button type="button" class="chip" data-dil="20">×20</button>
+      <button type="button" class="chip" data-dil="30">×30</button>
+      <button type="button" class="chip" data-dil="50">×50</button>
+    </div>
+  </div>
+
+  <div class="console-block">
+    <p class="console-label">Polaridad · toca una neurona</p>
+    <div class="chips" id="polChips"></div>
+  </div>
+
+  <div class="console-block console-end">
+    <button type="button" class="chip" id="reset">Reiniciar voltajes</button>
+    <button type="button" class="chip" id="full">Pantalla completa</button>
+  </div>
+</footer>
+
+<script type="module">
+/* ==========================================================================
+   Mural de la sala.
+
+   Dos funciones en una vista: el raster plot dirigido al público y la consola
+   con la que el operador ajusta la demostración. Se separan visualmente, no en
+   páginas distintas, para no requerir cambio de pestaña durante la sesión.
+   ========================================================================== */
+
+const $ = id => document.getElementById(id);
+
+const RASTER_WINDOW = 30000;   // ventana visible, en ms de reloj de pared
+const V_FLOOR = -85;
+const V_TH = -55;
+
+let roster = { neurons: [], edges: [], config: {} };
+const vms = new Map();         // asiento -> voltaje
+const spikes = [];             // {seat, t, polarity}
+
+/* --------------------------------------------------------------- conexión -- */
+
+const socket = new WebSocket(`ws://${location.host}/ws?role=mural`);
+
+socket.addEventListener("open", () => {
+  $("wire").textContent = "conectado";
+  $("wire").classList.remove("bad");
+});
+socket.addEventListener("close", () => {
+  $("wire").textContent = "sin servidor";
+  $("wire").classList.add("bad");
+});
+
+socket.addEventListener("message", event => {
+  const msg = JSON.parse(event.data);
+
+  if (msg.type === "roster") {
+    roster = msg;
+    for (const n of msg.neurons) if (n.vm != null) vms.set(n.seat, n.vm);
+    renderVitals();
+    renderGraph();
+    renderPolarityChips();
+
+  } else if (msg.type === "vm") {
+    vms.set(msg.seat, msg.v);
+
+  } else if (msg.type === "event" && msg.kind === "spike") {
+    spikes.push({ seat: msg.seat, t: performance.now(), polarity: msg.polarity });
+    fireNode(msg.seat);
+    for (const target of msg.targets ?? []) travelEdge(msg.seat, target, msg.delay_ms);
+  }
+});
+
+const send = payload => {
+  if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(payload));
+};
+
+/* ------------------------------------------------------------------ cifras -- */
+
+function renderVitals() {
+  $("count").textContent = roster.neurons.length;
+  $("topo").textContent = roster.config.topology ?? "—";
+  // El factor se muestra siempre para no representar una velocidad falsa.
+  $("dil").textContent = `×${roster.config.dilation ?? "—"} más lento`;
+
+  for (const chip of document.querySelectorAll("[data-dil]")) {
+    chip.setAttribute("aria-pressed",
+      String(Number(chip.dataset.dil) === Number(roster.config.dilation)));
+  }
+  for (const chip of document.querySelectorAll("[data-topo]")) {
+    chip.setAttribute("aria-pressed",
+      String(chip.dataset.topo === roster.config.topology));
+  }
+}
+
+/* ------------------------------------------------------------------ raster -- */
+
+const raster = $("raster");
+const rctx = raster.getContext("2d");
+
+function sizeCanvas() {
+  const ratio = Math.min(devicePixelRatio || 1, 2);
+  const box = raster.getBoundingClientRect();
+  raster.width = Math.max(1, Math.round(box.width * ratio));
+  raster.height = Math.max(1, Math.round(box.height * ratio));
+  rctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+addEventListener("resize", sizeCanvas);
+
+const styles = getComputedStyle(document.documentElement);
+const pick = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+
+function drawRaster() {
+  const width = raster.width / (Math.min(devicePixelRatio || 1, 2));
+  const height = raster.height / (Math.min(devicePixelRatio || 1, 2));
+  rctx.clearRect(0, 0, width, height);
+
+  const now = performance.now();
+  while (spikes.length && spikes[0].t < now - RASTER_WINDOW) spikes.shift();
+
+  const seats = roster.neurons.map(n => n.seat).filter(s => s != null);
+  const gutter = 46;
+  if (!seats.length) {
+    rctx.fillStyle = pick("--whisper", "#5d7085");
+    rctx.font = "13px ui-monospace, monospace";
+    rctx.fillText("esperando neuronas…", gutter, height / 2);
+    return;
+  }
+
+  const rowHeight = (height - 24) / seats.length;
+
+  // Rejilla de tiempo cada cinco segundos, rotulada hacia atrás.
+  rctx.strokeStyle = pick("--tint", "rgba(240,243,247,.06)");
+  rctx.fillStyle = pick("--whisper", "#5d7085");
+  rctx.font = "10px ui-monospace, monospace";
+  rctx.lineWidth = 1;
+  for (let seconds = 0; seconds <= RASTER_WINDOW / 1000; seconds += 5) {
+    const x = width - (seconds / (RASTER_WINDOW / 1000)) * (width - gutter);
+    rctx.beginPath();
+    rctx.moveTo(x, 0);
+    rctx.lineTo(x, height - 18);
+    rctx.stroke();
+    if (seconds) rctx.fillText(`-${seconds}s`, x - 10, height - 5);
+  }
+
+  // Una fila por neurona: etiqueta, línea base y barra de voltaje.
+  seats.forEach((seat, index) => {
+    const y = 6 + index * rowHeight + rowHeight / 2;
+    const neuron = roster.neurons.find(n => n.seat === seat) ?? {};
+    const inhibitory = neuron.polarity === "inhibitory";
+    const accent = inhibitory ? pick("--cool", "#7de3ff") : pick("--flame", "#ff8419");
+
+    rctx.fillStyle = pick("--whisper", "#5d7085");
+    rctx.font = "11px ui-monospace, monospace";
+    rctx.fillText(String(seat).padStart(2, "0"), 6, y + 4);
+
+    // Barra de carga: proximidad al umbral en el instante actual.
+    const vm = vms.get(seat) ?? -70;
+    const charge = Math.min(1, Math.max(0, (vm - V_FLOOR) / (V_TH - V_FLOOR)));
+    rctx.fillStyle = accent;
+    rctx.globalAlpha = 0.22;
+    rctx.fillRect(gutter - 18, y - 5, 12 * charge, 10);
+    rctx.globalAlpha = 1;
+
+    rctx.strokeStyle = pick("--tint", "rgba(240,243,247,.06)");
+    rctx.beginPath();
+    rctx.moveTo(gutter, y);
+    rctx.lineTo(width, y);
+    rctx.stroke();
+
+    rctx.strokeStyle = accent;
+    rctx.lineWidth = 2.5;
+    for (const spike of spikes) {
+      if (spike.seat !== seat) continue;
+      const x = gutter + ((spike.t - (now - RASTER_WINDOW)) / RASTER_WINDOW) * (width - gutter);
+      const tick = Math.min(rowHeight * 0.34, 14);
+      rctx.beginPath();
+      rctx.moveTo(x, y - tick);
+      rctx.lineTo(x, y + tick);
+      rctx.stroke();
+    }
+  });
+
+  // Borde derecho: el ahora.
+  rctx.strokeStyle = pick("--type", "#f0f3f7");
+  rctx.globalAlpha = 0.5;
+  rctx.lineWidth = 1;
+  rctx.beginPath();
+  rctx.moveTo(width - 0.5, 0);
+  rctx.lineTo(width - 0.5, height - 18);
+  rctx.stroke();
+  rctx.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------------- grafo -- */
+
+const NS = "http://www.w3.org/2000/svg";
+const graph = $("graph");
+const positions = new Map();
+
+function make(tag, attrs = {}) {
+  const node = document.createElementNS(NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  return node;
+}
+
+/**
+ * Dibuja el circuito.
+ *
+ * La topología de anillo se dispone en círculo; el resto en fila, salvo que el
+ * número de neuronas haga ilegible la fila, caso en el que también se usa
+ * disposición circular.
+ */
+function renderGraph() {
+  graph.textContent = "";
+  positions.clear();
+
+  const seats = roster.neurons.map(n => n.seat).filter(s => s != null);
+  const size = 400;
+  graph.setAttribute("viewBox", `0 0 ${size} ${size}`);
+  if (!seats.length) return;
+
+  const circular = roster.config.topology === "anillo" || seats.length > 7;
+  const radius = size * 0.36;
+
+  seats.forEach((seat, index) => {
+    if (circular) {
+      const angle = (index / seats.length) * Math.PI * 2 - Math.PI / 2;
+      positions.set(seat, {
+        x: size / 2 + Math.cos(angle) * radius,
+        y: size / 2 + Math.sin(angle) * radius,
+      });
+    } else {
+      const step = seats.length > 1 ? (size - 120) / (seats.length - 1) : 0;
+      positions.set(seat, { x: 60 + index * step, y: size / 2 });
+    }
+  });
+
+  const defs = make("defs");
+  const marker = make("marker", {
+    id: "arrow", viewBox: "0 0 10 10", refX: "9", refY: "5",
+    markerWidth: "5", markerHeight: "5", orient: "auto-start-reverse",
+  });
+  marker.appendChild(make("path", { d: "M 0 1 L 9 5 L 0 9 z", class: "arrow-head" }));
+  defs.appendChild(marker);
+  graph.appendChild(defs);
+
+  for (const [from, to] of roster.edges ?? []) {
+    const a = positions.get(from), b = positions.get(to);
+    if (!a || !b) continue;
+    // Se recorta el segmento para que el nodo destino no tape la flecha.
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const length = Math.hypot(dx, dy) || 1;
+    const pad = 24;
+    graph.appendChild(make("line", {
+      x1: a.x + (dx / length) * pad, y1: a.y + (dy / length) * pad,
+      x2: b.x - (dx / length) * pad, y2: b.y - (dy / length) * pad,
+      class: "edge", "marker-end": "url(#arrow)",
+      "data-edge": `${from}-${to}`,
+    }));
+  }
+
+  for (const seat of seats) {
+    const { x, y } = positions.get(seat);
+    const neuron = roster.neurons.find(n => n.seat === seat) ?? {};
+    const group = make("g", {
+      class: "node",
+      "data-seat": seat,
+      "data-polarity": neuron.polarity ?? "excitatory",
+      "data-myelin": neuron.myelinated === false ? "off" : "on",
+      transform: `translate(${x} ${y})`,
+    });
+    group.appendChild(make("circle", { r: 20, class: "node-ring" }));
+    group.appendChild(make("circle", { r: 4, class: "node-core" }));
+    const label = make("text", { y: 36, class: "node-label" });
+    label.textContent = String(seat).padStart(2, "0");
+    group.appendChild(label);
+    graph.appendChild(group);
+  }
+
+  updateCores();
+}
+
+/** El radio del núcleo de cada nodo refleja su voltaje actual. */
+function updateCores() {
+  for (const group of graph.querySelectorAll(".node")) {
+    const seat = Number(group.dataset.seat);
+    const vm = vms.get(seat) ?? -70;
+    const charge = Math.min(1, Math.max(0, (vm - V_FLOOR) / (V_TH - V_FLOOR)));
+    group.querySelector(".node-core").setAttribute("r", (3 + charge * 15).toFixed(1));
+  }
+}
+
+function fireNode(seat) {
+  const group = graph.querySelector(`.node[data-seat="${seat}"]`);
+  if (!group) return;
+  group.classList.remove("fire");
+  void group.getBoundingClientRect();   // reinicia la animación
+  group.classList.add("fire");
+  setTimeout(() => group.classList.remove("fire"), 620);
+}
+
+/** Marca la arista mientras el potencial viaja por ella. */
+function travelEdge(from, to, delayMs) {
+  const line = graph.querySelector(`[data-edge="${from}-${to}"]`);
+  if (!line) return;
+  line.classList.add("live");
+  setTimeout(() => line.classList.remove("live"), Math.max(delayMs ?? 200, 160));
+}
+
+/* ---------------------------------------------------------------- consola -- */
+
+for (const topology of ["cadena", "anillo", "convergencia", "divergencia"]) {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "chip";
+  chip.dataset.topo = topology;
+  chip.textContent = topology;
+  chip.addEventListener("click", () => send({ type: "config", topology }));
+  $("topoChips").appendChild(chip);
+}
+
+for (const chip of document.querySelectorAll("[data-dil]")) {
+  chip.addEventListener("click", () =>
+    send({ type: "config", dilation: Number(chip.dataset.dil) }));
+}
+
+/* Un botón por neurona para invertir su polaridad. Se reconstruye con cada
+   censo, ya que los asientos se dan de alta y baja durante la sesión. */
+function renderPolarityChips() {
+  const holder = $("polChips");
+  holder.textContent = "";
+  for (const neuron of roster.neurons) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip chip-seat";
+    chip.dataset.polarity = neuron.polarity ?? "excitatory";
+    chip.textContent = String(neuron.seat).padStart(2, "0");
+    chip.title = neuron.polarity === "inhibitory" ? "inhibitoria" : "excitatoria";
+    chip.addEventListener("click", () => send({
+      type: "polarity",
+      seat: neuron.seat,
+      kind: neuron.polarity === "inhibitory" ? "excitatory" : "inhibitory",
+    }));
+    holder.appendChild(chip);
+  }
+}
+
+$("reset").addEventListener("click", () => send({ type: "reset" }));
+
+const fullButton = $("full");
+if (document.documentElement.requestFullscreen) {
+  fullButton.addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+    } catch { /* rechazado por el navegador */ }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    fullButton.textContent = document.fullscreenElement ? "Salir" : "Pantalla completa";
+  });
+} else {
+  fullButton.hidden = true;
+}
+
+/* ------------------------------------------------------------------ bucle -- */
+
+sizeCanvas();
+(function tick() {
+  drawRaster();
+  updateCores();
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>

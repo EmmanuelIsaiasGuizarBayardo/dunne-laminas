@@ -1,0 +1,1136 @@
+{
+  "schema": "dunne.neuron.mapping/1",
+  "source": "Neurona.glb",
+  "generated": "2026-09-08T22:21:55+00:00",
+  "longitudinal_axis": "x",
+  "total_meshes": 48,
+  "confirmed": 48,
+  "parts": [
+    {
+      "slug": "dendrite_05",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id286",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "240",
+      "centroid": [
+        -0.2942,
+        0.0557,
+        0.3222
+      ],
+      "size": [
+        0.0334,
+        0.0781,
+        0.0158
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_03",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id290",
+      "triangles": 540,
+      "has_uv": false,
+      "material_name": "236",
+      "centroid": [
+        -0.3124,
+        0.0147,
+        0.3148
+      ],
+      "size": [
+        0.0589,
+        0.011,
+        0.0581
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_01",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id294",
+      "triangles": 660,
+      "has_uv": false,
+      "material_name": "238",
+      "centroid": [
+        -0.3632,
+        0.0598,
+        0.4226
+      ],
+      "size": [
+        0.0507,
+        0.0106,
+        0.0956
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_02",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id298",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "244",
+      "centroid": [
+        -0.346,
+        -0.0776,
+        0.3128
+      ],
+      "size": [
+        0.0426,
+        0.0465,
+        0.0686
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_06",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id299",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "246",
+      "centroid": [
+        -0.2768,
+        -0.0721,
+        0.3014
+      ],
+      "size": [
+        0.0248,
+        0.0647,
+        0.0158
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_04",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id300",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "242",
+      "centroid": [
+        -0.307,
+        -0.0273,
+        0.2824
+      ],
+      "size": [
+        0.0324,
+        0.0439,
+        0.0465
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_16",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id271",
+      "triangles": 510,
+      "has_uv": false,
+      "material_name": "248",
+      "centroid": [
+        -0.1446,
+        0.0432,
+        0.2964
+      ],
+      "size": [
+        0.0275,
+        0.0628,
+        0.0446
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_18",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id275",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "252",
+      "centroid": [
+        -0.105,
+        0.0383,
+        0.3672
+      ],
+      "size": [
+        0.0237,
+        0.0199,
+        0.1033
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_19",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id279",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "250",
+      "centroid": [
+        -0.0904,
+        0.097,
+        0.3495
+      ],
+      "size": [
+        0.0146,
+        0.066,
+        0.0115
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_12",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id254",
+      "triangles": 510,
+      "has_uv": false,
+      "material_name": "254",
+      "centroid": [
+        -0.1712,
+        -0.106,
+        0.2645
+      ],
+      "size": [
+        0.0796,
+        0.0384,
+        0.0451
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_07",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id258",
+      "triangles": 570,
+      "has_uv": false,
+      "material_name": "260",
+      "centroid": [
+        -0.2205,
+        -0.133,
+        0.2262
+      ],
+      "size": [
+        0.0552,
+        0.0626,
+        0.0352
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_10",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id262",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "258",
+      "centroid": [
+        -0.186,
+        -0.1004,
+        0.2891
+      ],
+      "size": [
+        0.0226,
+        0.0387,
+        0.0573
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_08",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id263",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "256",
+      "centroid": [
+        -0.2128,
+        -0.1081,
+        0.2061
+      ],
+      "size": [
+        0.0166,
+        0.0266,
+        0.0566
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_14",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id231",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "266",
+      "centroid": [
+        -0.1464,
+        0.0126,
+        0.1676
+      ],
+      "size": [
+        0.0889,
+        0.033,
+        0.0787
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_17",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id235",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "268",
+      "centroid": [
+        -0.1387,
+        0.0123,
+        0.1663
+      ],
+      "size": [
+        0.0494,
+        0.0291,
+        0.046
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_13",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id239",
+      "triangles": 480,
+      "has_uv": false,
+      "material_name": "262",
+      "centroid": [
+        -0.166,
+        0.0558,
+        0.1943
+      ],
+      "size": [
+        0.0424,
+        0.0366,
+        0.0672
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_11",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id240",
+      "triangles": 570,
+      "has_uv": false,
+      "material_name": "264",
+      "centroid": [
+        -0.1799,
+        0.066,
+        0.1409
+      ],
+      "size": [
+        0.032,
+        0.0201,
+        0.0584
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "nucleus",
+      "class": "nucleus",
+      "label_es": "Núcleo",
+      "node": "mesh_id201",
+      "triangles": 3072,
+      "has_uv": false,
+      "material_name": "270",
+      "centroid": [
+        -0.2092,
+        -0.0061,
+        0.3096
+      ],
+      "size": [
+        0.0691,
+        0.0577,
+        0.0744
+      ],
+      "proposed_class": "nucleus",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_09",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id205",
+      "triangles": 510,
+      "has_uv": false,
+      "material_name": "272",
+      "centroid": [
+        -0.1886,
+        0.1197,
+        0.1662
+      ],
+      "size": [
+        0.0373,
+        0.0768,
+        0.0298
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_15",
+      "class": "dendrite",
+      "label_es": "Dendrita",
+      "node": "mesh_id209",
+      "triangles": 660,
+      "has_uv": false,
+      "material_name": "274",
+      "centroid": [
+        -0.1457,
+        0.0838,
+        0.1548
+      ],
+      "size": [
+        0.0759,
+        0.0504,
+        0.0503
+      ],
+      "proposed_class": "dendrite",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "myelin_sheath_01",
+      "class": "myelin_sheath",
+      "label_es": "Vaina de mielina",
+      "node": "mesh_id118",
+      "triangles": 12800,
+      "has_uv": false,
+      "material_name": "276",
+      "centroid": [
+        -0.0936,
+        -0.0621,
+        0.2284
+      ],
+      "size": [
+        0.1137,
+        0.0657,
+        0.0821
+      ],
+      "proposed_class": "myelin_sheath",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "myelin_sheath_02",
+      "class": "myelin_sheath",
+      "label_es": "Vaina de mielina",
+      "node": "mesh_id124",
+      "triangles": 12800,
+      "has_uv": false,
+      "material_name": "276",
+      "centroid": [
+        0.0021,
+        -0.0698,
+        0.1855
+      ],
+      "size": [
+        0.1021,
+        0.0506,
+        0.0794
+      ],
+      "proposed_class": "myelin_sheath",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "myelin_sheath_03",
+      "class": "myelin_sheath",
+      "label_es": "Vaina de mielina",
+      "node": "mesh_id125",
+      "triangles": 12800,
+      "has_uv": false,
+      "material_name": "276",
+      "centroid": [
+        0.1002,
+        -0.0659,
+        0.1485
+      ],
+      "size": [
+        0.1117,
+        0.063,
+        0.082
+      ],
+      "proposed_class": "myelin_sheath",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "myelin_sheath_04",
+      "class": "myelin_sheath",
+      "label_es": "Vaina de mielina",
+      "node": "mesh_id131",
+      "triangles": 12800,
+      "has_uv": false,
+      "material_name": "276",
+      "centroid": [
+        0.1989,
+        -0.0544,
+        0.1109
+      ],
+      "size": [
+        0.1111,
+        0.0604,
+        0.082
+      ],
+      "proposed_class": "myelin_sheath",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "schwann_nucleus_04",
+      "class": "schwann_nucleus",
+      "label_es": "Núcleo de célula de Schwann",
+      "node": "mesh_id137",
+      "triangles": 6400,
+      "has_uv": true,
+      "material_name": "282",
+      "centroid": [
+        0.1894,
+        -0.0347,
+        0.1114
+      ],
+      "size": [
+        0.0313,
+        0.0214,
+        0.0331
+      ],
+      "proposed_class": "axon_inner",
+      "corrected": true,
+      "confirmed": true
+    },
+    {
+      "slug": "schwann_nucleus_03",
+      "class": "schwann_nucleus",
+      "label_es": "Núcleo de célula de Schwann",
+      "node": "mesh_id150",
+      "triangles": 6400,
+      "has_uv": true,
+      "material_name": "280",
+      "centroid": [
+        0.1032,
+        -0.0882,
+        0.1577
+      ],
+      "size": [
+        0.0345,
+        0.017,
+        0.0359
+      ],
+      "proposed_class": "axon_inner",
+      "corrected": true,
+      "confirmed": true
+    },
+    {
+      "slug": "schwann_nucleus_02",
+      "class": "schwann_nucleus",
+      "label_es": "Núcleo de célula de Schwann",
+      "node": "mesh_id156",
+      "triangles": 6400,
+      "has_uv": true,
+      "material_name": "278",
+      "centroid": [
+        0.0045,
+        -0.0794,
+        0.1744
+      ],
+      "size": [
+        0.0308,
+        0.0302,
+        0.0343
+      ],
+      "proposed_class": "axon_inner",
+      "corrected": true,
+      "confirmed": true
+    },
+    {
+      "slug": "schwann_nucleus_01",
+      "class": "schwann_nucleus",
+      "label_es": "Núcleo de célula de Schwann",
+      "node": "mesh_id157",
+      "triangles": 6400,
+      "has_uv": true,
+      "material_name": "284",
+      "centroid": [
+        -0.09,
+        -0.0739,
+        0.2442
+      ],
+      "size": [
+        0.0399,
+        0.0389,
+        0.0362
+      ],
+      "proposed_class": "axon_inner",
+      "corrected": true,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_03",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id162",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.3794,
+        -0.0181,
+        0.1121
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_05",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id168",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.3969,
+        0.0385,
+        0.072
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_02",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id169",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.3701,
+        0.0032,
+        -0.0438
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_01",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id170",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.3495,
+        -0.0003,
+        0.0109
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_06",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id171",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.4288,
+        -0.1577,
+        0.0948
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "synaptic_bouton_04",
+      "class": "synaptic_bouton",
+      "label_es": "Botón sináptico",
+      "node": "mesh_id177",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "286",
+      "centroid": [
+        0.3796,
+        -0.1466,
+        -0.041
+      ],
+      "size": [
+        0.01,
+        0.0071,
+        0.0101
+      ],
+      "proposed_class": "synaptic_bouton",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_04",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id99",
+      "triangles": 690,
+      "has_uv": false,
+      "material_name": "304",
+      "centroid": [
+        0.345,
+        -0.0953,
+        0.0149
+      ],
+      "size": [
+        0.0798,
+        0.1709,
+        0.1246
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_01",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id67",
+      "triangles": 3072,
+      "has_uv": false,
+      "material_name": "308",
+      "centroid": [
+        0.3119,
+        -0.0434,
+        0.0631
+      ],
+      "size": [
+        0.0476,
+        0.0282,
+        0.0411
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon",
+      "class": "axon",
+      "label_es": "Axón",
+      "node": "mesh_id71",
+      "triangles": 1050,
+      "has_uv": false,
+      "material_name": "288",
+      "centroid": [
+        0.0615,
+        -0.0576,
+        0.1627
+      ],
+      "size": [
+        0.4852,
+        0.0473,
+        0.189
+      ],
+      "proposed_class": "axon",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_03",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id95",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "306",
+      "centroid": [
+        0.3438,
+        -0.0203,
+        0.0093
+      ],
+      "size": [
+        0.0628,
+        0.1131,
+        0.1181
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_primary_02",
+      "class": "dendrite_primary",
+      "label_es": "Dendrita primaria",
+      "node": "mesh_id63",
+      "triangles": 900,
+      "has_uv": false,
+      "material_name": "298",
+      "centroid": [
+        -0.3038,
+        -0.0582,
+        0.2969
+      ],
+      "size": [
+        0.1164,
+        0.096,
+        0.0475
+      ],
+      "proposed_class": "dendrite_primary",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_07",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id105",
+      "triangles": 750,
+      "has_uv": false,
+      "material_name": "302",
+      "centroid": [
+        0.373,
+        -0.0993,
+        0.0796
+      ],
+      "size": [
+        0.1206,
+        0.1202,
+        0.0487
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_05",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id83",
+      "triangles": 630,
+      "has_uv": false,
+      "material_name": "314",
+      "centroid": [
+        0.3498,
+        -0.0026,
+        0.069
+      ],
+      "size": [
+        0.0955,
+        0.0857,
+        0.0252
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_02",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id87",
+      "triangles": 600,
+      "has_uv": false,
+      "material_name": "310",
+      "centroid": [
+        0.3426,
+        0.0018,
+        0.0401
+      ],
+      "size": [
+        0.0287,
+        0.0185,
+        0.0626
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_primary_03",
+      "class": "dendrite_primary",
+      "label_es": "Dendrita primaria",
+      "node": "mesh_id47",
+      "triangles": 690,
+      "has_uv": false,
+      "material_name": "296",
+      "centroid": [
+        -0.1986,
+        -0.103,
+        0.2369
+      ],
+      "size": [
+        0.0414,
+        0.1174,
+        0.0694
+      ],
+      "proposed_class": "dendrite_primary",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_primary_05",
+      "class": "dendrite_primary",
+      "label_es": "Dendrita primaria",
+      "node": "mesh_id39",
+      "triangles": 930,
+      "has_uv": false,
+      "material_name": "292",
+      "centroid": [
+        -0.1294,
+        0.0459,
+        0.3527
+      ],
+      "size": [
+        0.1613,
+        0.1135,
+        0.1302
+      ],
+      "proposed_class": "dendrite_primary",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_primary_01",
+      "class": "dendrite_primary",
+      "label_es": "Dendrita primaria",
+      "node": "mesh_id57",
+      "triangles": 900,
+      "has_uv": false,
+      "material_name": "300",
+      "centroid": [
+        -0.3303,
+        0.0483,
+        0.3601
+      ],
+      "size": [
+        0.1687,
+        0.1113,
+        0.1455
+      ],
+      "proposed_class": "dendrite_primary",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "dendrite_primary_04",
+      "class": "dendrite_primary",
+      "label_es": "Dendrita primaria",
+      "node": "mesh_id43",
+      "triangles": 1170,
+      "has_uv": false,
+      "material_name": "290",
+      "centroid": [
+        -0.1761,
+        0.0641,
+        0.1646
+      ],
+      "size": [
+        0.0768,
+        0.1529,
+        0.1481
+      ],
+      "proposed_class": "dendrite_primary",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "axon_terminal_06",
+      "class": "axon_terminal",
+      "label_es": "Terminal axónico",
+      "node": "mesh_id91",
+      "triangles": 570,
+      "has_uv": false,
+      "material_name": "312",
+      "centroid": [
+        0.3514,
+        -0.0288,
+        0.0858
+      ],
+      "size": [
+        0.0667,
+        0.0327,
+        0.0656
+      ],
+      "proposed_class": "axon_terminal",
+      "corrected": false,
+      "confirmed": true
+    },
+    {
+      "slug": "soma",
+      "class": "soma",
+      "label_es": "Soma",
+      "node": "mesh_id29",
+      "triangles": 3072,
+      "has_uv": true,
+      "material_name": "294",
+      "centroid": [
+        -0.2095,
+        -0.0159,
+        0.2734
+      ],
+      "size": [
+        0.1407,
+        0.1056,
+        0.1625
+      ],
+      "proposed_class": "soma",
+      "corrected": false,
+      "confirmed": true
+    }
+  ],
+  "groups": {
+    "dendrite": [
+      "mesh_id294",
+      "mesh_id298",
+      "mesh_id290",
+      "mesh_id300",
+      "mesh_id286",
+      "mesh_id299",
+      "mesh_id258",
+      "mesh_id263",
+      "mesh_id205",
+      "mesh_id262",
+      "mesh_id240",
+      "mesh_id254",
+      "mesh_id239",
+      "mesh_id231",
+      "mesh_id209",
+      "mesh_id271",
+      "mesh_id235",
+      "mesh_id275",
+      "mesh_id279"
+    ],
+    "nucleus": [
+      "mesh_id201"
+    ],
+    "myelin_sheath": [
+      "mesh_id118",
+      "mesh_id124",
+      "mesh_id125",
+      "mesh_id131"
+    ],
+    "schwann_nucleus": [
+      "mesh_id157",
+      "mesh_id156",
+      "mesh_id150",
+      "mesh_id137"
+    ],
+    "synaptic_bouton": [
+      "mesh_id170",
+      "mesh_id169",
+      "mesh_id162",
+      "mesh_id177",
+      "mesh_id168",
+      "mesh_id171"
+    ],
+    "axon_terminal": [
+      "mesh_id67",
+      "mesh_id87",
+      "mesh_id95",
+      "mesh_id99",
+      "mesh_id83",
+      "mesh_id91",
+      "mesh_id105"
+    ],
+    "axon": [
+      "mesh_id71"
+    ],
+    "dendrite_primary": [
+      "mesh_id57",
+      "mesh_id63",
+      "mesh_id47",
+      "mesh_id43",
+      "mesh_id39"
+    ],
+    "soma": [
+      "mesh_id29"
+    ]
+  },
+  "revision": 2,
+  "revision_note": "axon_inner reclasificado a schwann_nucleus tras validación visual (4 mallas); confirmado por E. Guízar Bayardo."
+}

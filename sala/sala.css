@@ -1,0 +1,454 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   SALA INTERACTIVA · DUNNE
+   Comparte los tokens de la lámina con otras prioridades: el dispositivo se
+   sostiene con una mano, a veces en penumbra, y el elemento que debe destacar
+   es el estado de la célula.
+
+   Hoja independiente de style.css: son dos aplicaciones con ciclos de vida
+   distintos y no deben compartir hoja de estilos.
+   ========================================================================== */
+
+:root{
+  --void:#070c12;
+  --ink:#0b1218;
+  --ink-lift:#101a24;
+
+  --type:#f0f3f7;
+  --murmur:#8fa1b4;
+  --whisper:#5d7085;
+
+  --flame:#ff8419;
+  --cool:#7de3ff;      /* inhibición: la contraparte fría del acento */
+  --alert:#ff4d6d;
+
+  --veil:rgba(11,18,24,.86);
+  --tint:rgba(240,243,247,.06);
+  --halo:rgba(7,12,18,.9);
+
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Noto Serif",serif;
+  --mono:ui-monospace,"SFMono-Regular","JetBrains Mono",Menlo,Consolas,monospace;
+
+  --gutter:clamp(16px,4vw,40px);
+}
+
+*{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body.room{
+  margin:0;
+  min-height:100vh;
+  min-height:100dvh;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  background:var(--ink);
+  color:var(--type);
+  font-family:var(--serif);
+  line-height:1.5;
+  overflow:hidden;
+  -webkit-user-select:none;
+  user-select:none;
+  transition:background-color .2s ease;
+}
+
+/* Retroalimentación de un potencial entrante, diferenciada por origen:
+   local es la acción de la persona, remoto proviene del circuito. */
+body.room[data-pulse="local"]{background:#12202c}
+body.room[data-pulse="remoto"]{background:#221a12}
+body.room[data-pulse="inhibitorio"]{background:#0d2630}
+
+/* Sin mielina el acento se desatura, para señalar el estado alterado. */
+body.room[data-demyelinated="on"]{--flame:#9fb3c4}
+body.room[data-polarity="inhibitory"]{--flame:var(--cool)}
+
+.dim{color:var(--whisper)}
+
+/* ============================================================ cabecera == */
+
+.bar{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px;
+  margin:0;
+  padding:clamp(12px,2.4vh,20px) var(--gutter);
+}
+
+.seat{
+  margin:0;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--whisper);
+}
+.seat b{
+  font-size:20px;
+  font-weight:400;
+  letter-spacing:.02em;
+  color:var(--flame);
+}
+
+.bar-right{
+  display:flex;
+  align-items:baseline;
+  gap:clamp(12px,3vw,24px);
+}
+
+.polarity{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.16em;
+  color:var(--flame);
+}
+
+.wire{
+  margin:0;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--murmur);
+}
+.wire.bad{color:var(--alert)}
+
+/* ============================================================== célula == */
+
+.cell{
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  gap:clamp(8px,1.6vh,18px);
+  min-height:0;
+  padding:0 var(--gutter);
+}
+
+.cell-model{
+  width:100%;
+  height:100%;
+  min-height:180px;
+  background:transparent;
+  --poster-color:transparent;
+  --progress-bar-color:var(--flame);
+  --progress-bar-height:1px;
+}
+
+.trace{
+  width:100%;
+  height:clamp(110px,20vh,200px);
+  display:block;
+}
+
+.readout{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:6px clamp(12px,3vw,26px);
+  margin:0;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.readout > span:first-child{
+  font-size:17px;
+  letter-spacing:.02em;
+  color:var(--flame);
+  font-variant-numeric:tabular-nums;
+}
+
+/* =========================================================== controles == */
+
+.controls{
+  display:grid;
+  gap:clamp(8px,1.6vh,14px);
+  padding:clamp(12px,2.4vh,22px) var(--gutter) clamp(18px,3.4vh,30px);
+}
+
+/* Único elemento con superficie llena: es el gesto principal. */
+.stim{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--void);
+  background:var(--flame);
+  border:0;
+  padding:clamp(16px,3.4vh,26px) 20px;
+  cursor:pointer;
+  transition:transform .08s ease,filter .15s ease;
+}
+.stim:active{transform:scale(.985);filter:brightness(1.15)}
+.stim:focus-visible{outline:2px solid var(--type);outline-offset:3px}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.ghost{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--murmur);
+  background:none;
+  border:0;
+  padding:6px 0;
+  cursor:pointer;
+  background-image:linear-gradient(var(--whisper),var(--whisper));
+  background-size:100% 1px;
+  background-position:0 100%;
+  background-repeat:no-repeat;
+}
+.ghost:hover{color:var(--type)}
+.ghost[aria-pressed="true"]{
+  color:var(--flame);
+  background-image:linear-gradient(var(--flame),var(--flame));
+}
+
+.controls > .dim{
+  margin:0;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.row .dim{
+  margin:0;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  text-align:right;
+}
+
+/* ============================================================== pantalla ==
+   En pantalla fija hay espacio para ampliar el modelo y el trazo. */
+@media (min-width:900px) and (min-height:600px){
+  .cell{
+    grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) auto;
+    gap:clamp(16px,2vw,34px);
+    align-items:center;
+  }
+  .cell-model{grid-row:1 / span 2}
+  .trace{height:clamp(160px,34vh,300px)}
+  .controls{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    align-items:center;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.room,.stim{transition:none}
+}
+
+/* ==========================================================================
+   MURAL
+   Proyector o pantalla grande a distancia: cifras grandes, contraste alto y
+   la consola del operador separada visualmente del panel del público, en la
+   misma vista.
+   ========================================================================== */
+
+body.wall{
+  margin:0;
+  min-height:100vh;
+  min-height:100dvh;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  background:var(--ink);
+  color:var(--type);
+  font-family:var(--serif);
+  line-height:1.5;
+  overflow:hidden;
+}
+
+.wall-bar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:clamp(16px,4vw,60px);
+  flex-wrap:wrap;
+  padding:clamp(14px,2.4vh,28px) var(--gutter) clamp(10px,1.6vh,18px);
+}
+
+.kicker{
+  margin:0 0 6px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.19em;
+  text-transform:uppercase;
+  color:var(--flame);
+}
+
+.wall-title{
+  margin:0;
+  font-weight:400;
+  font-size:clamp(1.5rem,3.4vw,2.9rem);
+  line-height:1.02;
+  letter-spacing:-.028em;
+}
+
+.vitals{
+  display:flex;
+  gap:clamp(16px,3vw,44px);
+  margin:0;
+}
+.vitals div{display:grid;gap:3px}
+.vitals dt{
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--whisper);
+}
+.vitals dd{
+  margin:0;
+  font-family:var(--mono);
+  font-size:clamp(15px,1.6vw,22px);
+  letter-spacing:.01em;
+  color:var(--type);
+  font-variant-numeric:tabular-nums;
+}
+#wire.bad{color:var(--alert)}
+
+/* --------------------------------------------------------------- paneles -- */
+
+.wall-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);
+  gap:clamp(14px,2.4vw,40px);
+  min-height:0;
+  padding:0 var(--gutter);
+}
+
+.panel{display:grid;grid-template-rows:auto minmax(0,1fr);gap:10px;min-height:0}
+
+.panel-title{
+  margin:0;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:400;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--type);
+}
+.panel-title .dim{
+  margin-left:10px;
+  letter-spacing:.12em;
+  color:var(--whisper);
+}
+
+/* El raster tiene prioridad en el reparto vertical. */
+.raster-panel{min-width:0}
+.graph-panel{min-width:0}
+
+#raster{width:100%;height:100%;display:block}
+
+.graph-hold{display:grid;place-items:center;min-height:0}
+#graph{width:100%;height:100%;max-height:100%}
+
+/* ----------------------------------------------------------------- grafo -- */
+
+.edge{
+  stroke:var(--whisper);
+  stroke-width:1.5;
+  opacity:.5;
+  transition:stroke .12s linear,opacity .12s linear,stroke-width .12s linear;
+}
+.edge.live{stroke:var(--flame);stroke-width:3;opacity:1}
+.arrow-head{fill:var(--whisper)}
+
+.node-ring{
+  fill:none;
+  stroke:var(--flame);
+  stroke-width:1.5;
+  opacity:.55;
+}
+.node-core{fill:var(--flame);transition:r .12s linear}
+.node-label{
+  fill:var(--whisper);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.1em;
+  text-anchor:middle;
+}
+
+.node[data-polarity="inhibitory"] .node-ring,
+.node[data-polarity="inhibitory"] .node-core{stroke:var(--cool);fill:var(--cool)}
+.node[data-polarity="inhibitory"] .node-ring{fill:none}
+
+/* Trazo discontinuo: expone en el grafo el estado sin mielina. */
+.node[data-myelin="off"] .node-ring{stroke-dasharray:4 5;opacity:.9}
+
+.node.fire .node-ring{animation:burst .6s ease-out}
+@keyframes burst{
+  0%{r:20;opacity:1;stroke-width:3}
+  100%{r:34;opacity:0;stroke-width:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .node.fire .node-ring{animation:none;opacity:1;stroke-width:3}
+}
+
+/* --------------------------------------------------------------- consola -- */
+
+.console{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
+  gap:clamp(14px,2.6vw,40px);
+  padding:clamp(12px,2vh,22px) var(--gutter) clamp(14px,2.4vh,26px);
+  background:var(--void);
+}
+
+.console-block{display:grid;gap:8px}
+.console-end{margin-left:auto;grid-auto-flow:column;align-items:end;gap:12px}
+
+.console-label{
+  margin:0;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:var(--whisper);
+}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+.chip{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--murmur);
+  background:none;
+  border:0;
+  padding:7px 11px;
+  cursor:pointer;
+  background-image:linear-gradient(var(--tint),var(--tint));
+  background-size:100% 100%;
+  transition:color .14s ease,background-image .14s ease;
+}
+.chip:hover{color:var(--type)}
+.chip[aria-pressed="true"]{
+  color:var(--void);
+  background-image:linear-gradient(var(--flame),var(--flame));
+}
+.chip:focus-visible{outline:2px solid var(--flame);outline-offset:2px}
+
+.chip-seat{font-variant-numeric:tabular-nums;min-width:38px;text-align:center}
+.chip-seat[data-polarity="inhibitory"]{
+  color:var(--void);
+  background-image:linear-gradient(var(--cool),var(--cool));
+}
+
+/* Pantalla angosta: el grafo pasa debajo del raster. */
+@media (max-width:1000px){
+  .wall-grid{grid-template-columns:100%;grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}
+  .vitals{gap:16px}
+}

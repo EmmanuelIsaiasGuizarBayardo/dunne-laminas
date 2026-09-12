@@ -1,0 +1,135 @@
+{
+  "schema": "dunne.neuron.propagation/1",
+  "model": "Neurona_sala.glb",
+  "axis": "x",
+  "note": "frac = posición normalizada sobre el eje longitudinal, 0 en el soma y 1 en el botón más distal. El cliente multiplica frac por el retardo de conducción para saber cuándo encender cada estructura.",
+  "sequence": [
+    {
+      "material": "dunne_soma",
+      "class": "soma",
+      "frac": 0.0
+    },
+    {
+      "material": "dunne_myelin_sheath_01",
+      "class": "myelin_sheath",
+      "frac": 0.1811
+    },
+    {
+      "material": "dunne_myelin_sheath_02",
+      "class": "myelin_sheath",
+      "frac": 0.3311
+    },
+    {
+      "material": "dunne_axon",
+      "class": "axon",
+      "frac": 0.3619
+    },
+    {
+      "material": "dunne_myelin_sheath_03",
+      "class": "myelin_sheath",
+      "frac": 0.4849
+    },
+    {
+      "material": "dunne_myelin_sheath_04",
+      "class": "myelin_sheath",
+      "frac": 0.6396
+    },
+    {
+      "material": "dunne_axon_terminal_01",
+      "class": "axon_terminal",
+      "frac": 0.8167
+    },
+    {
+      "material": "dunne_axon_terminal_04",
+      "class": "axon_terminal",
+      "frac": 0.8641
+    },
+    {
+      "material": "dunne_axon_terminal_02",
+      "class": "axon_terminal",
+      "frac": 0.8661
+    },
+    {
+      "material": "dunne_axon_terminal_03",
+      "class": "axon_terminal",
+      "frac": 0.8719
+    },
+    {
+      "material": "dunne_synaptic_bouton_01",
+      "class": "synaptic_bouton",
+      "frac": 0.8757
+    },
+    {
+      "material": "dunne_axon_terminal_05",
+      "class": "axon_terminal",
+      "frac": 0.8763
+    },
+    {
+      "material": "dunne_axon_terminal_06",
+      "class": "axon_terminal",
+      "frac": 0.8812
+    },
+    {
+      "material": "dunne_axon_terminal_07",
+      "class": "axon_terminal",
+      "frac": 0.9053
+    },
+    {
+      "material": "dunne_synaptic_bouton_02",
+      "class": "synaptic_bouton",
+      "frac": 0.9079
+    },
+    {
+      "material": "dunne_synaptic_bouton_03",
+      "class": "synaptic_bouton",
+      "frac": 0.9225
+    },
+    {
+      "material": "dunne_synaptic_bouton_04",
+      "class": "synaptic_bouton",
+      "frac": 0.9227
+    },
+    {
+      "material": "dunne_synaptic_bouton_05",
+      "class": "synaptic_bouton",
+      "frac": 0.95
+    },
+    {
+      "material": "dunne_synaptic_bouton_06",
+      "class": "synaptic_bouton",
+      "frac": 1.0
+    }
+  ],
+  "dendrites": [
+    "dunne_dendrite_01",
+    "dunne_dendrite_02",
+    "dunne_dendrite_primary_01",
+    "dunne_dendrite_03",
+    "dunne_dendrite_primary_02",
+    "dunne_dendrite_04",
+    "dunne_dendrite_05",
+    "dunne_dendrite_06",
+    "dunne_dendrite_07",
+    "dunne_dendrite_08",
+    "dunne_dendrite_primary_03",
+    "dunne_dendrite_09",
+    "dunne_dendrite_10",
+    "dunne_dendrite_11",
+    "dunne_dendrite_primary_04",
+    "dunne_dendrite_12",
+    "dunne_dendrite_13",
+    "dunne_dendrite_14",
+    "dunne_dendrite_16",
+    "dunne_dendrite_15",
+    "dunne_dendrite_17",
+    "dunne_dendrite_primary_05",
+    "dunne_dendrite_18",
+    "dunne_dendrite_19"
+  ],
+  "myelin": [
+    "dunne_myelin_sheath_01",
+    "dunne_myelin_sheath_02",
+    "dunne_myelin_sheath_03",
+    "dunne_myelin_sheath_04"
+  ]
+}
