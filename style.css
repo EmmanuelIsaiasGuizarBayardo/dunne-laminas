@@ -249,8 +249,8 @@ body[data-staff="on"] .staff-only{display:block}
 .cover{
   position:absolute;
   left:var(--gutter);
-  top:clamp(84px,11vh,132px);
-  bottom:clamp(92px,15vh,180px);
+  top:clamp(104px,13vh,150px);
+  bottom:clamp(56px,9vh,110px);
   display:grid;
   align-content:center;
   justify-items:start;
@@ -295,7 +295,10 @@ body[data-staff="on"] .staff-only{display:block}
 .monument{
   margin:0;
   font-weight:400;
-  font-size:clamp(2.7rem,9.5vw,8.5rem);
+  /* El tope en vh es indispensable: clamp() escala con el ancho, pero la
+     restricción real es la altura. Sin él, en una ventana baja el título
+     desborda su banda y se reparte sobre la cabecera y sobre el cintillo. */
+  font-size:min(clamp(2.7rem,9.5vw,8.5rem),13vh);
   line-height:.88;
   letter-spacing:-.035em;
   text-wrap:balance;
@@ -314,12 +317,21 @@ body[data-staff="on"] .staff-only{display:block}
 
 /* Una sola línea de texto sobre el modelo. Todo lo demás está a un toque de
    distancia, en una ventana. */
+/* Durante la portada el cintillo permanece oculto: aún no hay estructura que
+   describir y su texto competiría por el mismo espacio que el título. */
+.stage[data-mode="cover"] .caption{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
 .caption{
   position:absolute;
   left:0;
   right:0;
   bottom:0;
   z-index:4;
+  transition:opacity .45s ease,visibility .45s;
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
   align-items:end;
