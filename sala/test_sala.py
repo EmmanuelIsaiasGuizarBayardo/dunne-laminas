@@ -6,11 +6,16 @@ del protocolo se valide contra una independiente y no contra sí misma.
 import asyncio, json, threading, time, sys
 from pathlib import Path
 import websockets
-sys.path.insert(0, '.')
+
+# El directorio del archivo, no el de trabajo: la suite debe poder ejecutarse
+# desde la raíz del repositorio (`python sala/test_sala.py`) además de desde
+# esta carpeta.
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
 from server import serve
 
 PORT = 8399
-srv = serve("127.0.0.1", PORT, Path("."), {"topology": "cadena", "dilation": 1})
+srv = serve("127.0.0.1", PORT, ROOT, {"topology": "cadena", "dilation": 1})
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 time.sleep(0.4)
 URL = f"ws://127.0.0.1:{PORT}/ws"

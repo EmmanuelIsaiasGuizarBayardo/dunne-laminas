@@ -150,7 +150,13 @@ body[data-staff="on"] .staff-only{display:block}
   color:var(--flame);
 }
 
-.sigil{cursor:default;-webkit-user-select:none;user-select:none}
+.sigil{
+  cursor:default;
+  -webkit-user-select:none;
+  user-select:none;
+  /* Evita que el doble toque del navegador se coma los toques del gesto. */
+  touch-action:manipulation;
+}
 
 /* Botón de AR. Ya no se entrega por slot a model-viewer: es un elemento de
    la página que llama a activateAR(), porque el slot lo posiciona el propio
@@ -214,7 +220,7 @@ body[data-staff="on"] .staff-only{display:block}
   padding:clamp(14px,2vw,26px) var(--gutter);
   pointer-events:none;
 }
-.masthead a,.masthead button{pointer-events:auto}
+.masthead a,.masthead button,.masthead .sigil{pointer-events:auto}
 
 .sigil{display:flex;align-items:center;gap:10px}
 .sigil img{display:block;height:28px;width:auto}

@@ -31,7 +31,7 @@
 <meta name="twitter:description" content="Explora una motoneurona en 3D y en realidad aumentada, sin instalar nada.">
 <meta name="twitter:image" content="https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/assets/poster.webp">
 
-<link rel="stylesheet" href="./style.css?v=1.5">
+<link rel="stylesheet" href="./style.css?v=1.6">
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
 <!-- Configuración del modelo expuesto. Para publicar otro se duplica esta
@@ -476,7 +476,9 @@ function setStaff(on) {
   $("staffFlag").hidden = !on;
 }
 
-$("sigil").addEventListener("click", () => {
+/* pointerdown y no click: en móvil, una secuencia rápida de toques puede
+   perder eventos click por la detección de doble toque del navegador. */
+$("sigil").addEventListener("pointerdown", () => {
   const now = Date.now();
   taps = [...taps, now].filter(t => now - t < STAFF_WINDOW_MS);
   if (taps.length >= STAFF_TAPS) {
