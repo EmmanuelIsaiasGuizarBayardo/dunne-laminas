@@ -3,8 +3,11 @@
 Material didáctico interactivo de la División Universitaria de Neuroingeniería
 (DUNNE), Facultad de Medicina, UNAM.
 
+Una motoneurona en 3D y realidad aumentada, sin instalar nada, y una sala
+interactiva donde cada dispositivo del público es una neurona de un circuito
+compartido.
+
 Sitio publicado: <https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/>
-Repositorio: `EmmanuelIsaiasGuizarBayardo/dunne-neurona`
 
 El repositorio contiene dos aplicaciones que comparten el mismo modelo 3D y el
 mismo contenido didáctico:
@@ -275,7 +278,28 @@ para que no puedan divergir.
 
 ---
 
-## 8. Convenciones
+## 8. Licencia
+
+El repositorio combina software con obra creativa, y cada parte lleva la
+licencia que le corresponde. Es la práctica habitual: las licencias Creative
+Commons no son adecuadas para software y las de software no están pensadas
+para modelos ni para textos.
+
+| Qué | Licencia |
+|---|---|
+| Código: Python, JavaScript, CSS, HTML | **MIT** (`LICENSE`) |
+| Modelo 3D, contenido didáctico, imágenes | **CC BY 4.0** (`LICENSE-CONTENIDO.md`) |
+| Logotipo de DUNNE | reservado; ver `LICENSE-CONTENIDO.md` |
+
+Ambas permiten hacer forks, modificar, redistribuir y usar con cualquier
+finalidad, incluso comercial, y ambas exigen mantener el crédito. Eso es todo
+lo que hay que recordar.
+
+Quien reutilice el modelo o el contenido debe incluir la nota de atribución
+que está en `LICENSE-CONTENIDO.md`. Quien reutilice el código debe conservar
+el aviso de copyright de `LICENSE`.
+
+## 9. Convenciones
 
 **Código.** Python con anotaciones de tipo y docstrings en formato NumPy.
 JavaScript en módulos ES, sin empaquetador. Nombres de identificadores en
@@ -297,7 +321,7 @@ ciclos de vida distintos y no deben acoplarse.
 
 ---
 
-## 9. Cómo contribuir
+## 10. Cómo contribuir
 
 1. Haz un fork y crea una rama descriptiva: `sala/registro-de-sesion`,
    `lamina/marcador-vuforia`.
@@ -314,18 +338,19 @@ ciclos de vida distintos y no deben acoplarse.
 
 ---
 
-## 10. Documentación adicional
+## 11. Documentación adicional
 
 | archivo | contenido |
 |---|---|
 | `docs/operacion.md` | guía de sala: red, firewall, laptop dedicada, lista de verificación |
 | `docs/PUBLICAR.md` | publicación del sitio y migración de dominio |
 | `instrucciones.html` | manual de uso para el público |
-| `Revision_academica_Neurona_AR.docx` | contenido para revisión por especialista |
+| `docs/Revision_academica_Neurona_AR.docx` | contenido para revisión por especialista |
+| `LICENSE` · `LICENSE-CONTENIDO.md` | términos de reutilización del código y del contenido |
 
 ---
 
-## 11. Estado y pendientes
+## 12. Estado y pendientes
 
 - Marcador de Vuforia rediseñado como imagen independiente del código QR. Un
   QR es un mal *Image Target*: su patrón es repetitivo y auto-similar.
@@ -333,18 +358,22 @@ ciclos de vida distintos y no deben acoplarse.
   independiente. Hoy no existen como mallas separadas en el modelo.
 - Registro de sesión en la sala, para mostrar el raster plot al cierre.
 - ESP32 como neurona física. El protocolo ya lo admite.
-- Revisión académica del contenido firmada.
+- Auditoría final del contenido didáctico. La primera revisión por
+  especialista ya está incorporada; `content.es.json` registra el estado en
+  `review.status`.
 
 ---
 
 ## Créditos
 
-Modelo 3D y aplicación en Unity: Mauricio Mendiola Rivera.
-Limpieza del modelo, contenido didáctico, neurona web y sala interactiva:
+**Modelo 3D y aplicación en Unity:** Mauricio Mendiola Rivera. El modelo fue
+creado desde cero, sin incorporar geometría de terceros, y sus derechos de
+uso, modificación y distribución fueron cedidos a la División Universitaria de
+Neuroingeniería. El proyecto puede escalarse y redistribuirse sin
+restricciones heredadas.
+
+**Limpieza del modelo, contenido didáctico, sitio web y sala interactiva:**
 División Universitaria de Neuroingeniería, UNAM.
 
 El modelo representa una motoneurona somática: soma y dendritas en la médula
 espinal, axón en un nervio periférico mielinizado por células de Schwann.
-
-Pendiente de definir: licencia del repositorio y procedencia documentada del
-modelo 3D original.
