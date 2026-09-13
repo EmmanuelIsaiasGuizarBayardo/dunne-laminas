@@ -29,7 +29,7 @@
       "class": "soma",
       "label": "Soma",
       "order": 1,
-      "short": "Centro de control celular donde se sintetiza componentes vitales e integra las señales eléctricas recibidas de las dendritas.",
+      "short": "Centro de control celular que sintetiza componentes vitales e integra las señales eléctricas recibidas de las dendritas.",
       "long": "El soma concentra la maquinaria de síntesis: núcleo, retículo endoplasmico rugoso (los cuerpos de Nissl que se ven al microscopio), aparato de Golgi y mitocondrias. Una motoneurona debe producir proteínas no solo para si misma, sino para un axón que puede ser cientos de veces más largo que el diámetro de su propio cuerpo, y transportarlas hasta el extremo mediante transporte axonal. Los somas de las motoneuronas están entre los más grandes del sistema nervioso.\n\nSu segunda función es integradora: los potenciales postsinápticos excitatorios e inhibitorios que llegan por las dendritas se suman en el espacio y en el tiempo. Conviene precisar que la decisión de disparar no ocurre en el soma, sino en el segmento inicial del axón, la región contigua donde la densidad de canales de sodio dependientes de voltaje es mayor y donde el umbral es más bajo.",
       "analogy": "Es la oficina central de la célula: recibe todos los reportes y además fabrica las piezas que el resto necesita.",
       "misconception": "El soma no 'decide' el disparo. El umbral se alcanza en el segmento inicial del axón, una región que este modelo no representa como geometría separada.",
