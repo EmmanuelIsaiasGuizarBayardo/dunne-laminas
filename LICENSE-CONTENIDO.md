@@ -34,9 +34,9 @@ enlace a la licencia e indique si realizó cambios.
 
 Al reutilizar el modelo o el contenido, incluir una nota como esta:
 
-> Modelo 3D de motoneurona y contenido didáctico: Mauricio Mendiola Rivera y
-> la División Universitaria de Neuroingeniería (DUNNE), UNAM. Proyecto Neurona
-> AR, disponible bajo CC BY 4.0.
+> Modelo 3D de motoneurona: Mauricio Mendiola Rivera. Contenido didáctico y
+> aplicaciones: Emmanuel Isaías Guízar Bayardo. División Universitaria de
+> Neuroingeniería (DUNNE), UNAM. Proyecto Neurona AR, bajo CC BY 4.0.
 > https://emmanuelisaiasguizarbayardo.github.io/dunne-neurona/
 
 Si se realizaron modificaciones, indicarlo: *"adaptado de"* en lugar de *"por"*.

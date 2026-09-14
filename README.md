@@ -373,7 +373,8 @@ Neuroingeniería. El proyecto puede escalarse y redistribuirse sin
 restricciones heredadas.
 
 **Limpieza del modelo, contenido didáctico, sitio web y sala interactiva:**
-División Universitaria de Neuroingeniería, UNAM.
+Emmanuel Isaías Guízar Bayardo, División Universitaria de Neuroingeniería,
+UNAM.
 
 El modelo representa una motoneurona somática: soma y dendritas en la médula
 espinal, axón en un nervio periférico mielinizado por células de Schwann.
